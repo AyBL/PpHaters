@@ -1,4 +1,0 @@
-lobby _addSlot: (| punto = (| x = 5. y <- 6. print = (| | 'hola' print.). |). |).
-lobby _addSlot: (| punto1 = (| x = 5. y <- 6. print2* = punto. |). |).
-punto print.
-punto1 print.

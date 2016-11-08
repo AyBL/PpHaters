@@ -1,2 +1,0 @@
-lobby _addSlot: (| punto = (| x = 5. y <- 6.|). |).
-punto print.

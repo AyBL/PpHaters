@@ -1,0 +1,3 @@
+lobby _addSlot: (| punto = (| x = 5. y <- 6. print = (| | 'hola' print.). |).
+punto print.
+

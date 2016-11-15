@@ -52,13 +52,9 @@ void WindowObject::on_menu_file_popup_create(){
 
     std::string name,buffer;
     char sendbuffer[500];
-    // name = "Aye";
     auto newapp = Gtk::Application::create(argc, argv,"name.objeto");
     NameWindow namewindow(name);
     get_pointer(x,y);
-
-    // x = htonl(x);
-    // y = htonl(y);
 
     std::cout<< "x: " << x << " y: " << y <<std::endl;
 
@@ -70,16 +66,27 @@ void WindowObject::on_menu_file_popup_create(){
 
     proxy.SendCommand(sendbuffer);
 
+    std::cout<< "Envio x: " << x <<std::endl;
     memset(sendbuffer,0,500);
     memcpy(sendbuffer, &x, sizeof(int));
     proxy.SendPositions(sendbuffer);
-
+    std::cout<< "Envio y: "<< y <<std::endl;
     memset(sendbuffer,0,500);
     memcpy(sendbuffer, &y, sizeof(int) );
     proxy.SendPositions(sendbuffer);
 }
 
 void WindowObject::on_menu_file_popup_close(){
+
+    std::map <std::string,SelfObject*>::iterator it;
+    std::string name;
+    for (it = selfobjects.begin(); it != selfobjects.end();++it){
+        name = it->first;
+        selfobjects[name]->hide();
+        delete(selfobjects[name]);
+        selfobjects.erase(name);
+    }
+
     hide();
 }
 

@@ -1,10 +1,32 @@
 #include "clientmenuwindow.h"
+#include "clientServerproxy.h"
 #include <iostream>
 
-MenuWindow::MenuWindow(std::vector<std::tuple<unsigned char,std::string>> &lobbies,std::string &name):
+void MenuWindow::load_rows(){
+    int i;
+
+    Gtk::TreeModel::Row row;
+
+    for (i = 0; i < lobbies.size(); i++){
+        row = *(m_refTreeModel->append());
+        row[m_Columns.m_col_id] = std::get<0>(lobbies[i]);
+        row[m_Columns.m_col_name] = std::get<1>(lobbies[i]);
+    }
+
+    row = *(m_refTreeModel->append());
+    row[m_Columns.m_col_id] = 255;
+    row[m_Columns.m_col_name] = "Nuevo";
+
+    m_Combo.set_active(row);
+    id = 255;
+    name = "Nuevo";
+
+}
+
+MenuWindow::MenuWindow(std::string &name,Serverproxy &proxy):
 m_VBox(Gtk::ORIENTATION_VERTICAL),m_Label("Seleccione Lobby: ",true),
 m_Label2("Ingrese nombre de nuevo Lobby: ",true),
-m_Button("Accept"),lobbies(lobbies),name(name){
+m_Button("Accept"),name(name),proxy(proxy){
     set_title("Menu Lobbies");
 
     int i;
@@ -16,23 +38,7 @@ m_Button("Accept"),lobbies(lobbies),name(name){
     m_refTreeModel = Gtk::ListStore::create(m_Columns);
     m_Combo.set_model(m_refTreeModel);
 
-    Gtk::TreeModel::Row row;
-
-    for (i = 0; i < lobbies.size(); i++){
-        row = *(m_refTreeModel->append());
-        row[m_Columns.m_col_id] = std::get<0>(lobbies[i]);
-        row[m_Columns.m_col_name] = std::get<1>(lobbies[i]);
-
-        if (i == 0){
-            m_Combo.set_active(row);
-            id = std::get<0>(lobbies[i]);
-            name = std::get<1>(lobbies[i]);
-        }
-    }
-
-    row = *(m_refTreeModel->append());
-        row[m_Columns.m_col_id] = 255;
-        row[m_Columns.m_col_name] = "Nuevo";
+    this->load_rows();
 
     //Add the model columns to the Combo (which is a kind of view),
     //rendering them in the default way:
@@ -49,9 +55,11 @@ m_Button("Accept"),lobbies(lobbies),name(name){
     add(m_VBox);
 
     //Connect signal handler:
-    m_Combo.signal_changed().connect( sigc::mem_fun(*this, &MenuWindow::on_combo_changed));
+    m_Combo.signal_changed().connect( sigc::mem_fun(*this,
+        &MenuWindow::on_combo_changed));
 
-    m_Button.signal_clicked().connect( sigc::mem_fun(*this,&MenuWindow::on_button_accept));
+    m_Button.signal_clicked().connect( sigc::mem_fun(*this,
+        &MenuWindow::on_button_accept));
 
     show_all_children();
 }
@@ -77,10 +85,26 @@ void MenuWindow::on_combo_changed(){
 }
 
 void MenuWindow::on_button_accept(){
+    std::string buffer("L");
+    char sendbuffer[1000];
     if (id == 255){
         Glib::ustring uname;
         uname = m_Entry.get_text();
         name = uname;
     }
+
+    buffer = buffer + std::string(1,id) + std::string(1,name.size()) + name;
+
+    std::memset(sendbuffer, 0, 1000);
+
+    memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+
+    proxy.SendCommand(sendbuffer);
     hide();
+}
+
+void MenuWindow::AddLobbies(std::tuple<unsigned char,std::string> newlobbies){
+    lobbies.push_back(newlobbies);
+    m_refTreeModel->clear();
+    this->load_rows();
 }

@@ -8,10 +8,13 @@
 #include <vector>
 #include <map>
 #include <tuple>
+#include "clientServerproxy.h"
 
 class SlotTreeView : public Gtk::TreeView{
     public:
-        SlotTreeView(std::map<std::string, std::tuple<std::string,bool,std::string> > &slots);
+        SlotTreeView(std::map<std::string,
+            std::tuple<std::string,std::string,char,std::string> > &slots,
+            std::string nameselfobject, Serverproxy &proxy);
         virtual ~SlotTreeView();
         void load_rows();
 
@@ -23,6 +26,7 @@ class SlotTreeView : public Gtk::TreeView{
         //Signal handler for popup menu items:
         void on_menu_file_popup_delete();
         void on_menu_file_popup_accept();
+        void on_menu_file_popup_obtain();
 
         ModelColumns m_Columns;
 
@@ -31,9 +35,10 @@ class SlotTreeView : public Gtk::TreeView{
 
         Gtk::Menu m_Menu_Popup;
 
-        std::map<std::string, std::tuple<std::string,bool,std::string> > &slots;
-
-
+        std::map<std::string,
+            std::tuple<std::string,std::string,char,std::string> > &slots;
+        std::string nameselfobject;
+        Serverproxy &proxy;
 };
 
 #endif

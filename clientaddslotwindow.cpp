@@ -1,11 +1,12 @@
 #include "clientaddslotwindow.h"
 #include <iostream>
 
-AddSlotWindow::AddSlotWindow()
+AddSlotWindow::AddSlotWindow(std::string &slot)
 : m_VBox(Gtk::ORIENTATION_VERTICAL),
   m_Label("New Slot: ",true),
   m_Button_Close("Close"),
-  m_Button_Create("Create Slot")
+  m_Button_Create("Create Slot"),
+  slot(slot)
 {
   set_size_request(200, 100);
   set_title("AddSlot");
@@ -23,7 +24,7 @@ AddSlotWindow::AddSlotWindow()
   m_HBox.pack_start(m_Button_Close);
 
   m_Button_Create.signal_clicked().connect( sigc::mem_fun(*this,
-              &AddSlotWindow::on_button_create) );  
+              &AddSlotWindow::on_button_create) );
   m_Button_Create.set_can_default();
   m_Button_Create.grab_default();
 
@@ -39,8 +40,7 @@ AddSlotWindow::~AddSlotWindow(){
 }
 
 void AddSlotWindow::on_button_create(){
-  std::string text(m_Entry.get_text());
-  std::cout << text << std::endl;
+  slot = m_Entry.get_text();
   hide();
 }
 

@@ -1,27 +1,46 @@
+
 #include "clientwindowobject.h"
 #include "clientmenuwindow.h"
 #include <gtkmm/application.h>
+#include "clientServerproxy.h"
 #include <vector>
 
 int main(int argc, char *argv[]){
 	auto app = Gtk::Application::create(argc, argv, "Window Lobbies");
 	auto app2 = Gtk::Application::create(argc, argv, "Lobby");
+	const char *ip = "127.0.0.1";
+	const char *port = "9090";
 
-	std::vector<std::tuple<unsigned char,std::string>> lobbies;
 	std::string name;
-	lobbies.push_back(std::make_tuple(0,"Hola"));
-	lobbies.push_back(std::make_tuple(1,"Puto"));
 
-	MenuWindow window2(lobbies,name);
+	WindowObject *window;
+	MenuWindow *menuwindow;
 
-	//Shows the window and returns when it is closed.
-	app->run(window2);
+	Serverproxy proxy(&menuwindow,&window);
 
-	WindowObject window(argc,argv,name);
-	// Shows the window and returns when it is closed.
+	proxy.Connect(ip,port);
 
-	window.AddObject("Hola");
-	window.AddSlot("Hola",std::make_tuple("yo","10",true,"int"));
+	menuwindow = new MenuWindow(name,proxy);
 
-	return app2->run(window);
+	proxy.ReceiveAnswer();
+
+	app->run(*menuwindow);
+
+	delete(menuwindow);
+
+	window = new WindowObject(argc,argv,name,proxy);
+
+	proxy.start();
+	window->AddObject("Hola",50,50);
+	window->AddSlot("Hola",std::make_tuple("yo","10","int",'m',""));
+
+	app2->run(*window);
+
+	delete(window);
+
+	proxy.Stop();
+
+	proxy.join();
+
+	return 0;
 }

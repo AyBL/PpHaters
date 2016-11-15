@@ -12,6 +12,8 @@ class ModelColumns : public Gtk::TreeModel::ColumnRecord{
     	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
     	Gtk::TreeModelColumn<Glib::ustring> m_col_value;
     	Gtk::TreeModelColumn<bool> m_col_mutable;
+        Gtk::TreeModelColumn<Glib::ustring> m_col_type;
+        Gtk::TreeModelColumn<Glib::ustring> m_col_parent;
 };
 
 #endif

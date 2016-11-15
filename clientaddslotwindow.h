@@ -1,6 +1,7 @@
 #ifndef ADDSLOTWINDOW_H
 #define ADDSLOTWINDOW_H
 
+
 #include <gtkmm/window.h>
 #include <gtkmm/button.h>
 #include <gtkmm/box.h>
@@ -9,7 +10,7 @@
 
 class AddSlotWindow : public Gtk::Window{
     public:
-        AddSlotWindow();
+        AddSlotWindow(std::string &slot);
         virtual ~AddSlotWindow();
 
     protected:
@@ -24,6 +25,7 @@ class AddSlotWindow : public Gtk::Window{
         Gtk::Label m_Label;
         Gtk::Button m_Button_Close;
         Gtk::Button m_Button_Create;
+        std::string &slot;
 };
 
 #endif

@@ -5,17 +5,18 @@
 #include <gtkmm/button.h>
 #include <gtkmm/buttonbox.h>
 #include <gtkmm/menu.h>
+#include <gtkmm/scrolledwindow.h>
 #include "clientslottreeview.h"
 #include "clientmessagewindow.h"
 #include "clientaddslotwindow.h"
-#include "clientmovewindow.h"
 #include <gtkmm/fixed.h>
+#include "clientServerproxy.h"
 
 class SelfObject : public Gtk::Frame{
     public:
-        SelfObject(std::string name, int argc, char **argv);
+        SelfObject(std::string name, int argc, char **argv,Serverproxy &proxy);
         virtual ~SelfObject();
-        void AddSlot(std::tuple<std::string, std::string,bool,std::string> newslot);
+        void AddSlot(std::tuple<std::string, std::string,std::string,char,std::string> newslot);
         void RemoveSlot(std::string name);
 
     protected:
@@ -28,7 +29,7 @@ class SelfObject : public Gtk::Frame{
         void set_idle_state();
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-        std::map<std::string, std::tuple<std::string,bool,std::string> > slots;
+        std::map<std::string, std::tuple<std::string,std::string,char,std::string> > slots;
 
         //Child widgets:
         Gtk::Box m_VBox;
@@ -45,14 +46,16 @@ class SelfObject : public Gtk::Frame{
         Gtk::Button m_Button_AddSlot;
         Gtk::Button m_Button_Quit;
 
+        std::string name;
+
         int argc;
         char **argv;
+        Serverproxy &proxy;
 
         int x;
         int y;
 
         bool ismoving;
-
 };
 
 #endif

@@ -1,10 +1,13 @@
 #include <iostream>
 #include "clientselfobject.h"
 
-SelfObject::SelfObject(std::string name, int argc, char **argv)
+SelfObject::SelfObject(std::string name, int argc, char **argv, Serverproxy &proxy)
 : m_VBox(Gtk::ORIENTATION_VERTICAL),m_Label(name), m_Button_Message("Message"),
-m_Button_AddSlot("Add Slot"), m_Button_Quit("Quit"),m_TreeView(slots),argc(argc),argv(argv),x(0),y(0),
+m_Button_AddSlot("Add Slot"),m_Button_Quit("Quit"),m_TreeView(slots,name,proxy),
+name(name),argc(argc),argv(argv),proxy(proxy),x(0),y(0),
 ismoving(false){
+
+
 
     set_border_width(1);
 
@@ -69,8 +72,21 @@ void SelfObject::on_button_move(){
 
 void SelfObject::on_button_addslot(){
     auto newapp = Gtk::Application::create(argc, argv,"AddSlot");
-    AddSlotWindow addslot;
+    std::string newslot,buffer;
+    char sendbuffer[1000];
+    AddSlotWindow addslot(newslot);
     newapp->run(addslot);
+
+    newslot = name + " _addSlot: (| " + newslot +". |).";
+
+    buffer = "S"+std::string(1,newslot.size())+newslot;
+
+    std::memset(sendbuffer, 0, 1000);
+
+	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+
+
+    proxy.SendCommand(sendbuffer);
 }
 
 void SelfObject::set_moving_state(){
@@ -83,27 +99,52 @@ void SelfObject::set_moving_state(){
 }
 
 void SelfObject::set_idle_state(){
+    Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
+    Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
+    char sendbuffer[1000];
+    std::string buffer;
+    int c;
+    win->get_pointer(x,y);
+
+    // char xy[8];
+
+
+
+    buffer = "M"+std::string(1,name.size())+name;
+
+
+    std::memset(sendbuffer, 0, 1000);
+
+	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+    c = strlen(sendbuffer);
+
+    for (int i = 0; i < 4; i++){
+        sendbuffer[c+i] = (char)((x >> (8*i)) & 0xFF);
+        sendbuffer[c+4+i] = (char)((y >> (8*i)) & 0xFF);
+    }
+
+
+    proxy.SendCommand(sendbuffer);
+
     ismoving = false;
 }
-
 
 //Decorator
 bool SelfObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     if (ismoving){
+        int xx,yy;
         Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
         Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
-        int xx,yy;
-
         win->get_pointer(xx,yy);
         fix->move(*this,xx - x,yy - y);
     }
-    return Gtk::Frame::on_draw(cr);
 
+    return Gtk::Frame::on_draw(cr);
 }
 
-void SelfObject::AddSlot(std::tuple<std::string, std::string,bool,std::string> newslot){
-    std::tuple<std::string,bool,std::string> aux;
-    aux = std::make_tuple(std::get<1>(newslot),std::get<2>(newslot),std::get<3>(newslot));
+void SelfObject::AddSlot(std::tuple<std::string, std::string,std::string,char,std::string> newslot){
+    std::tuple<std::string,std::string,char,std::string> aux;
+    aux = std::make_tuple(std::get<1>(newslot),std::get<2>(newslot),std::get<3>(newslot),std::get<4>(newslot));
     slots[std::get<0>(newslot)] = aux;
 
     m_TreeView.load_rows();

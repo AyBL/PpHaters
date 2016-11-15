@@ -61,7 +61,7 @@ void SelfObject::on_button_quit(){
 }
 
 void SelfObject::on_button_message(){
-    auto newapp = Gtk::Application::create(argc, argv,"Message");
+    auto newapp = Gtk::Application::create(argc, argv,"one.message");
     MessageWindow message;
     newapp->run(message);
 }
@@ -71,7 +71,7 @@ void SelfObject::on_button_move(){
 }
 
 void SelfObject::on_button_addslot(){
-    auto newapp = Gtk::Application::create(argc, argv,"AddSlot");
+    auto newapp = Gtk::Application::create(argc, argv,"add.slot");
     std::string newslot,buffer;
     char sendbuffer[1000];
     AddSlotWindow addslot(newslot);

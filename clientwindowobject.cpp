@@ -10,6 +10,11 @@ argc(argc),argv(argv),proxy(proxy) {
         sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_create) );
     m_Menu_Popup.append(*item);
 
+    item = Gtk::manage(new Gtk::MenuItem("_Close App", true));
+    item->signal_activate().connect(
+        sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_close) );
+    m_Menu_Popup.append(*item);
+
     set_title("Morphic: " + name);
     set_border_width(1);
     set_default_size(WIDTH, HEIGHT);
@@ -48,7 +53,7 @@ void WindowObject::on_menu_file_popup_create(){
     std::string name,buffer;
     char sendbuffer[500];
     // name = "Aye";
-    auto newapp = Gtk::Application::create(argc, argv,"Nombre Objeto");
+    auto newapp = Gtk::Application::create(argc, argv,"name.objeto");
     NameWindow namewindow(name);
     get_pointer(x,y);
 
@@ -72,6 +77,10 @@ void WindowObject::on_menu_file_popup_create(){
     memset(sendbuffer,0,500);
     memcpy(sendbuffer, &y, sizeof(int) );
     proxy.SendPositions(sendbuffer);
+}
+
+void WindowObject::on_menu_file_popup_close(){
+    hide();
 }
 
 void WindowObject::AddObject(std::string name,int x, int y){

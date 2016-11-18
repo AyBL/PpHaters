@@ -9,7 +9,7 @@
 
 class MessageWindow : public Gtk::Window{
     public:
-        MessageWindow();
+        MessageWindow(std::string &message);
         virtual ~MessageWindow();
 
     protected:
@@ -27,6 +27,7 @@ class MessageWindow : public Gtk::Window{
         Gtk::Button m_Button_GetIt;
         Gtk::Button m_Button_DoIt;
         Gtk::CheckButton m_CheckButton_Visible;
+        std::string &message;
 };
 
 #endif

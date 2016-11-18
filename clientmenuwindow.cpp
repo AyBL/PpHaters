@@ -3,7 +3,7 @@
 #include <iostream>
 
 void MenuWindow::load_rows(){
-    int i;
+    unsigned int i;
 
     Gtk::TreeModel::Row row;
 
@@ -28,8 +28,6 @@ m_VBox(Gtk::ORIENTATION_VERTICAL),m_Label("Seleccione Lobby: ",true),
 m_Label2("Ingrese nombre de nuevo Lobby: ",true),
 m_Button("Accept"),name(name),proxy(proxy){
     set_title("Menu Lobbies");
-
-    int i;
 
     m_Entry.set_max_length(50);
     m_Entry.set_text("Nuevo");
@@ -86,7 +84,7 @@ void MenuWindow::on_combo_changed(){
 
 void MenuWindow::on_button_accept(){
     std::string buffer("L");
-    char sendbuffer[1000];
+    char sendbuffer[200];
     if (id == 255){
         Glib::ustring uname;
         uname = m_Entry.get_text();
@@ -95,7 +93,7 @@ void MenuWindow::on_button_accept(){
 
     buffer = buffer + std::string(1,id) + std::string(1,name.size()) + name;
 
-    std::memset(sendbuffer, 0, 1000);
+    std::memset(sendbuffer, 0, 200);
 
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 

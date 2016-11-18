@@ -8,8 +8,8 @@
 int main(int argc, char *argv[]){
 	auto app = Gtk::Application::create(argc, argv, "window.lobbies");
 	auto app2 = Gtk::Application::create(argc, argv, "one.lobby");
-	const char *ip = "127.0.0.1";
-	const char *port = "9090";
+	const char *ip = "192.168.1.145";
+	const char *port = "9999";
 
 	std::string name;
 
@@ -31,8 +31,6 @@ int main(int argc, char *argv[]){
 	window = new WindowObject(argc,argv,name,proxy);
 
 	proxy.start();
-	// window->AddObject("Hola",50,50);
-	// window->AddSlot("Hola",std::make_tuple("yo","10","int",'m',""));
 
 	app2->run(*window);
 

@@ -4,31 +4,32 @@
 void SlotTreeView::load_rows(){
     //Fill the TreeView's model
 
-    std::map<std::string, std::tuple<std::string,std::string,char,std::string> >::iterator it;
+    std::map<std::string, std::tuple<std::string,char,std::string> >::iterator it;
 
     Gtk::TreeModel::Row row;
     char auxmut;
 
+    m_refTreeModel->clear();
+
     for (it = slots.begin(); it != slots.end(); ++it ){
-        std::tuple<std::string,std::string,char,std::string>& aux = it->second;
+        std::tuple<std::string,char,std::string>& aux = it->second;
         row = *(m_refTreeModel->append());
         row[m_Columns.m_col_id] = 0;
         row[m_Columns.m_col_name] = it->first ;
         row[m_Columns.m_col_value] = std::get<0> (aux);
-        auxmut = std::get<2>(aux);
+        auxmut = std::get<1>(aux);
         if ((auxmut == 'i')||(auxmut == 'p'))
             row[m_Columns.m_col_mutable] = false;
         else
             row[m_Columns.m_col_mutable] = true;
-        row[m_Columns.m_col_type] = std::get<1>(aux);
-        row[m_Columns.m_col_parent] = std::get<3>(aux);
+        row[m_Columns.m_col_parent] = std::get<2>(aux);
 
     }
 
 }
 
 SlotTreeView::SlotTreeView(std::map<std::string,
-    std::tuple<std::string,std::string,char,std::string> > &slots,
+    std::tuple<std::string,char,std::string> > &slots,
     std::string nameselfobject,Serverproxy &proxy):slots(slots),
     nameselfobject(nameselfobject),proxy(proxy){
 
@@ -41,7 +42,6 @@ SlotTreeView::SlotTreeView(std::map<std::string,
     append_column_editable("Name", m_Columns.m_col_name);
     append_column_editable("Value", m_Columns.m_col_value);
     append_column("Mutable", m_Columns.m_col_mutable);
-    append_column("Type", m_Columns.m_col_type);
     append_column("Parent", m_Columns.m_col_parent);
 
     load_rows();
@@ -87,7 +87,8 @@ bool SlotTreeView::on_button_press_event(GdkEventButton* button_event){
 void SlotTreeView::on_menu_file_popup_delete(){
     auto refSelection = get_selection();
     std::string buffer;
-    char sendbuffer[1000];
+    char sendbuffer[200];
+    std::memset(sendbuffer, 0, 200);
     if (refSelection){
         Gtk::TreeModel::iterator iter = refSelection->get_selected();
         if (iter){
@@ -96,7 +97,7 @@ void SlotTreeView::on_menu_file_popup_delete(){
             buffer = buffer + nameselfobject + std::string(1,name.size());
             buffer = buffer + name;
             memcpy(sendbuffer, buffer.c_str(), buffer.size() );
-            proxy.SendCommand(sendbuffer);
+            // proxy.SendCommand(sendbuffer);
         }
     }
 }
@@ -127,4 +128,19 @@ void SlotTreeView::on_menu_file_popup_accept(){
 }
 
 void SlotTreeView::on_menu_file_popup_obtain(){
+    auto refSelection = get_selection();
+    std::string buffer;
+    char sendbuffer[200];
+    std::memset(sendbuffer, 0, 200);
+    if (refSelection){
+        Gtk::TreeModel::iterator iter = refSelection->get_selected();
+        if (iter){
+            Glib::ustring name = (*iter)[m_Columns.m_col_name];
+            buffer = "M"+std::string(1,nameselfobject.size());
+            buffer = buffer + nameselfobject + std::string(1,name.size());
+            buffer = buffer + name;
+            memcpy(sendbuffer, buffer.c_str(), buffer.size() );
+            // proxy.SendCommand(sendbuffer);
+        }
+    }
 }

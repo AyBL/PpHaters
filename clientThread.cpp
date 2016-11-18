@@ -1,4 +1,4 @@
-#include "commonThread.h"
+#include "clientThread.h"
 
 Thread::Thread(){
 }

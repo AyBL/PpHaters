@@ -13,7 +13,7 @@
 class SlotTreeView : public Gtk::TreeView{
     public:
         SlotTreeView(std::map<std::string,
-            std::tuple<std::string,std::string,char,std::string> > &slots,
+            std::tuple<std::string,char,std::string> > &slots,
             std::string nameselfobject, Serverproxy &proxy);
         virtual ~SlotTreeView();
         void load_rows();
@@ -36,7 +36,7 @@ class SlotTreeView : public Gtk::TreeView{
         Gtk::Menu m_Menu_Popup;
 
         std::map<std::string,
-            std::tuple<std::string,std::string,char,std::string> > &slots;
+            std::tuple<std::string,char,std::string> > &slots;
         std::string nameselfobject;
         Serverproxy &proxy;
 };

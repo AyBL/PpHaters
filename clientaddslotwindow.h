@@ -25,6 +25,7 @@ class AddSlotWindow : public Gtk::Window{
         Gtk::Label m_Label;
         Gtk::Button m_Button_Close;
         Gtk::Button m_Button_Create;
+        
         std::string &slot;
 };
 

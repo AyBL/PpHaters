@@ -7,8 +7,6 @@ m_Button_AddSlot("Add Slot"),m_Button_Quit("Quit"),m_TreeView(slots,name,proxy),
 name(name),argc(argc),argv(argv),proxy(proxy),x(0),y(0),
 ismoving(false){
 
-
-
     set_border_width(1);
 
     add(m_VBox);
@@ -61,9 +59,32 @@ void SelfObject::on_button_quit(){
 }
 
 void SelfObject::on_button_message(){
+    Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
+    int posx,posy;
     auto newapp = Gtk::Application::create(argc, argv,"one.message");
-    MessageWindow message;
+    std::string newmessage,buffer;
+    char sendbuffer[500];
+    MessageWindow message(newmessage);
     newapp->run(message);
+
+    buffer = "M" + std::string(1,name.size()) + name;
+
+    buffer = buffer + std::string(1,newmessage.size()) + newmessage;
+
+    std::memset(sendbuffer, 0, 500);
+
+	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+
+    // proxy.SendCommand(sendbuffer);
+
+    posx = fix->child_property_x(*this) + this->get_width()/2;
+    posy = fix->child_property_y(*this) + this->get_height() + 10;
+
+    memcpy(sendbuffer, &x, sizeof(int));
+    // proxy.SendPositions(sendbuffer);
+
+    memcpy(sendbuffer, &y, sizeof(int));
+    // proxy.SendPositions(sendbuffer);
 }
 
 void SelfObject::on_button_move(){
@@ -73,20 +94,20 @@ void SelfObject::on_button_move(){
 void SelfObject::on_button_addslot(){
     auto newapp = Gtk::Application::create(argc, argv,"add.slot");
     std::string newslot,buffer;
-    char sendbuffer[1000];
+    char sendbuffer[500];
     AddSlotWindow addslot(newslot);
     newapp->run(addslot);
+    if (newslot.empty()){
+        newslot = name + " _addSlot: (| " + newslot +". |).";
 
-    newslot = name + " _addSlot: (| " + newslot +". |).";
+        buffer = "A"+std::string(1,newslot.size())+newslot;
 
-    buffer = "S"+std::string(1,newslot.size())+newslot;
+        std::memset(sendbuffer, 0, 500);
 
-    std::memset(sendbuffer, 0, 1000);
+        memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
-
-
-    proxy.SendCommand(sendbuffer);
+        proxy.SendCommand(sendbuffer);
+    }
 }
 
 void SelfObject::set_moving_state(){
@@ -101,32 +122,26 @@ void SelfObject::set_moving_state(){
 void SelfObject::set_idle_state(){
     Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
     Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
-    char sendbuffer[1000];
+    char sendbuffer[200];
     std::string buffer;
-    int c;
-    win->get_pointer(x,y);
-
-    // char xy[8];
-
-
-
-    buffer = "M"+std::string(1,name.size())+name;
-
-
-    std::memset(sendbuffer, 0, 1000);
-
-	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
-    c = strlen(sendbuffer);
-
-    for (int i = 0; i < 4; i++){
-        sendbuffer[c+i] = (char)((x >> (8*i)) & 0xFF);
-        sendbuffer[c+4+i] = (char)((y >> (8*i)) & 0xFF);
-    }
-
-
-    proxy.SendCommand(sendbuffer);
 
     ismoving = false;
+
+    win->get_pointer(x,y);
+
+    buffer = "P"+std::string(1,name.size())+name;
+
+    std::memset(sendbuffer, 0, 200);
+    memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+    proxy.SendCommand(sendbuffer);
+
+    memset(sendbuffer,0,200);
+    memcpy(sendbuffer, &x, sizeof(int) );
+    proxy.SendPositions(sendbuffer);
+
+    memset(sendbuffer,0,200);
+    memcpy(sendbuffer, &y, sizeof(int) );
+    proxy.SendPositions(sendbuffer);
 }
 
 //Decorator
@@ -138,13 +153,12 @@ bool SelfObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
         win->get_pointer(xx,yy);
         fix->move(*this,xx - x,yy - y);
     }
-
     return Gtk::Frame::on_draw(cr);
 }
 
-void SelfObject::AddSlot(std::tuple<std::string, std::string,std::string,char,std::string> newslot){
-    std::tuple<std::string,std::string,char,std::string> aux;
-    aux = std::make_tuple(std::get<1>(newslot),std::get<2>(newslot),std::get<3>(newslot),std::get<4>(newslot));
+void SelfObject::AddSlot(std::tuple<std::string, std::string,char,std::string> newslot){
+    std::tuple<std::string,char,std::string> aux;
+    aux = std::make_tuple(std::get<1>(newslot),std::get<2>(newslot),std::get<3>(newslot));
     slots[std::get<0>(newslot)] = aux;
 
     m_TreeView.load_rows();

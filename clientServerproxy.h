@@ -1,14 +1,17 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "commonsocket.h"
-#include "commonThread.h"
+#include "clientsocket.h"
+#include "clientThread.h"
 #include "clientmenuwindow.h"
 #include <gtkmm/application.h>
 #include <cstring>
 #include <iostream>
 #include <tuple>
 #include <arpa/inet.h>
+#include "clientaddobjectaction.h"
+#include "clientremoveobjectaction.h"
+#include "clientaddvalueaction.h"
 
 #define MAXSIZE 2000
 #define COMMANDSIZE 1
@@ -40,11 +43,13 @@ class Serverproxy: public Thread{
 
         bool must_be_run;
 
+        void CommandA();
         void CommandD();
         void CommandE();
         void CommandL();
         void CommandM();
         void CommandO();
+        void CommandP();
         void CommandS();
 
 };

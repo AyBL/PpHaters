@@ -1,10 +1,11 @@
 #include <iostream>
 #include "clientvaluewindow.h"
 
-ValueObject::ValueObject(std::string name): m_VBox(Gtk::ORIENTATION_VERTICAL),
-m_Label(name),m_Button_Quit("Quit"),name(name),x(0),y(0),ismoving(false){
+ValueObject::ValueObject(std::string name, int x, int y,Serverproxy &proxy):
+m_VBox(Gtk::ORIENTATION_VERTICAL), m_Label(name),m_Button_Quit("Quit"),
+name(name),x(x),y(y),proxy(proxy),ismoving(false){
     set_border_width(1);
-
+    set_opacity(1);
     add(m_VBox);
 
     m_Button_Move.signal_pressed().connect( sigc::mem_fun(*this,
@@ -21,6 +22,9 @@ m_Label(name),m_Button_Quit("Quit"),name(name),x(0),y(0),ismoving(false){
 
     m_Button_Quit.signal_clicked().connect( sigc::mem_fun(*this,
                 &ValueObject::on_button_quit) );
+
+    m_VBox.set_opacity(1);
+    m_HBox.set_opacity(1);
 
     show_all_children();
 }
@@ -39,10 +43,13 @@ void ValueObject::on_button_move(){
 void ValueObject::set_moving_state(){
     Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
     Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
+    int xx,yy;
+
     ismoving = true;
-    win->get_pointer(x,y);
-    x = x - fix-> child_property_x(*this);
-    y = y - fix-> child_property_y(*this);
+
+    win->get_pointer(xx,yy);
+    dx = xx - x;
+    dy = yy - y;
 }
 
 void ValueObject::set_idle_state(){
@@ -50,10 +57,14 @@ void ValueObject::set_idle_state(){
     Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
     char sendbuffer[200];
     std::string buffer;
+    int xx,yy;
 
     ismoving = false;
 
-    win->get_pointer(x,y);
+    win->get_pointer(xx,yy);
+
+    xx = xx - dx;
+    yy = yy - dy;
 
     buffer = "P"+std::string(1,name.size())+name;
 
@@ -62,11 +73,11 @@ void ValueObject::set_idle_state(){
     // proxy.SendCommand(sendbuffer);
 
     memset(sendbuffer,0,200);
-    memcpy(sendbuffer, &x, sizeof(int) );
+    memcpy(sendbuffer, &xx, sizeof(int) );
     // proxy.SendPositions(sendbuffer);
 
-    memset(sendbuffer,0,200);
-    memcpy(sendbuffer, &y, sizeof(int) );
+    // memset(sendbuffer,0,200);
+    memcpy(sendbuffer, &yy, sizeof(int) );
     // proxy.SendPositions(sendbuffer);
 }
 
@@ -77,7 +88,7 @@ bool ValueObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
         Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
         Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
         win->get_pointer(xx,yy);
-        fix->move(*this,xx - x,yy - y);
+        fix->move(*this,xx - dx,yy - dy);
     }
     return Gtk::Frame::on_draw(cr);
 }
@@ -87,4 +98,18 @@ void ValueObject::AddParent(std::string parent){
         parents.clear();
     else
         parents.push_back(parent);
+}
+
+void ValueObject::SetPosition(int posx, int posy){
+    x = posx;
+    y = posy;
+}
+
+void ValueObject::GetPosition(int &posx, int &posy){
+    posx = x;
+    posy = y;
+}
+
+std::vector<std::string> ValueObject::GetParents(){
+    return parents;
 }

@@ -6,15 +6,19 @@
 #include <gtkmm/label.h>
 #include <gtkmm/fixed.h>
 #include <gtkmm/window.h>
+#include "clientServerproxy.h"
 #include <vector>
 #include <string>
 #include <cstring>
 
 class ValueObject : public Gtk::Frame{
     public:
-        ValueObject(std::string name);
+        ValueObject(std::string name,int x, int y, Serverproxy &proxy);
         virtual ~ValueObject();
         void AddParent(std::string parent);
+        void SetPosition(int posx, int posy);
+        void GetPosition(int &posx, int &posy);
+        std::vector<std::string> GetParents();
 
     protected:
         //Signal handlers:
@@ -35,8 +39,10 @@ class ValueObject : public Gtk::Frame{
 
         std::string name;
 
-        int x;
-        int y;
+        int x,dx;
+        int y,dy;
+
+        Serverproxy &proxy;
 
         bool ismoving;
 

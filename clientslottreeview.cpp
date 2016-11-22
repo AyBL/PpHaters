@@ -7,18 +7,19 @@ void SlotTreeView::load_rows(){
     std::map<std::string, std::tuple<std::string,char,std::string> >::iterator it;
 
     Gtk::TreeModel::Row row;
-    char auxmut;
 
     m_refTreeModel->clear();
+    nameslots.clear();
 
     for (it = slots.begin(); it != slots.end(); ++it ){
         std::tuple<std::string,char,std::string>& aux = it->second;
+        char auxmut = std::get<1>(aux);
+        nameslots.push_back(std::make_tuple(it->first,std::get<0> (aux)));
         row = *(m_refTreeModel->append());
-        row[m_Columns.m_col_id] = 0;
+        row[m_Columns.m_col_id] = nameslots.size() - 1;
         row[m_Columns.m_col_name] = it->first ;
         row[m_Columns.m_col_value] = std::get<0> (aux);
-        auxmut = std::get<1>(aux);
-        if ((auxmut == 'i')||(auxmut == 'p'))
+        if ((auxmut == 'I')||(auxmut == 'P'))
             row[m_Columns.m_col_mutable] = false;
         else
             row[m_Columns.m_col_mutable] = true;
@@ -30,8 +31,8 @@ void SlotTreeView::load_rows(){
 
 SlotTreeView::SlotTreeView(std::map<std::string,
     std::tuple<std::string,char,std::string> > &slots,
-    std::string nameselfobject,Serverproxy &proxy):slots(slots),
-    nameselfobject(nameselfobject),proxy(proxy){
+    std::string nameselfobject,Serverproxy &proxy, int &x, int &y):
+    slots(slots),nameselfobject(nameselfobject),proxy(proxy),x(x),y(y){
 
     //Create the Tree model:
     m_refTreeModel = Gtk::ListStore::create(m_Columns);
@@ -70,7 +71,7 @@ SlotTreeView::~SlotTreeView(){
 }
 
 bool SlotTreeView::on_button_press_event(GdkEventButton* button_event){
-    bool return_value = false;
+    bool return_value;
 
     //Call base class, to allow normal handling,
     //such as allowing the row to be selected by the right-click:
@@ -103,33 +104,53 @@ void SlotTreeView::on_menu_file_popup_delete(){
 }
 
 void SlotTreeView::on_menu_file_popup_accept(){
-    // auto refSelection = get_selection();
-    // int id;
-    // Glib::ustring name;
-    // Glib::ustring value;
-    // bool mut;
-    //
-    // if (refSelection){
-    //     Gtk::TreeModel::iterator iter = refSelection->get_selected();
-    //     if (iter){
-    //         id = (*iter)[m_Columns.m_col_id];
-    //         name = (*iter)[m_Columns.m_col_name];
-    //         value = (*iter)[m_Columns.m_col_value];
-    //         mut = (*iter)[m_Columns.m_col_mutable];
-    //         std::get<0>(slots[id]) = name;
-    //         if (mut)
-    //             std::get<1>(slots[id]) = value;
-    //
-    //         m_refTreeModel->clear();
-    //         load_rows();
-    //
-    //     }
-    // }
+    auto refSelection = get_selection();
+    int id;
+    Glib::ustring name;
+    Glib::ustring value;
+    bool mut;
+
+    std::tuple<std::string,std::string> nameslotaux;
+    char sendbuffer[200];
+    std::string namebuffer,valuebuffer;
+
+    std::memset(sendbuffer, 0, 200);
+
+    if (refSelection){
+        Gtk::TreeModel::iterator iter = refSelection->get_selected();
+        if (iter){
+            id = (*iter)[m_Columns.m_col_id];
+            name = (*iter)[m_Columns.m_col_name];
+            value = (*iter)[m_Columns.m_col_value];
+            mut = (*iter)[m_Columns.m_col_mutable];
+
+            nameslotaux = nameslots[id];
+
+            if (name != std::get<0>(nameslotaux)){
+
+                std::memset(sendbuffer, 0, 200);
+            }
+
+            if (mut && (value != std::get<1>(nameslotaux) )){
+                valuebuffer = name + ": " + value + ".";
+                valuebuffer = std::string(1,valuebuffer.size()) + valuebuffer;
+                valuebuffer = ""+std::string(1,nameselfobject.size())+nameselfobject+valuebuffer;
+
+                memcpy(sendbuffer, valuebuffer.c_str(), valuebuffer.size() );
+                // proxy.SendCommand(sendbuffer);
+            }
+
+            // m_refTreeModel->clear();
+            // load_rows();
+
+        }
+    }
 }
 
 void SlotTreeView::on_menu_file_popup_obtain(){
     auto refSelection = get_selection();
     std::string buffer;
+    int posx, posy;
     char sendbuffer[200];
     std::memset(sendbuffer, 0, 200);
     if (refSelection){
@@ -140,7 +161,15 @@ void SlotTreeView::on_menu_file_popup_obtain(){
             buffer = buffer + nameselfobject + std::string(1,name.size());
             buffer = buffer + name;
             memcpy(sendbuffer, buffer.c_str(), buffer.size() );
-            // proxy.SendCommand(sendbuffer);
+            proxy.SendCommand(sendbuffer);
+            posx = x - 100;
+            posy = y + 100;
+
+            memcpy(sendbuffer, &posx, sizeof(int));
+            proxy.SendPositions(sendbuffer);
+
+            memcpy(sendbuffer, &posy, sizeof(int));
+            proxy.SendPositions(sendbuffer);
         }
     }
 }

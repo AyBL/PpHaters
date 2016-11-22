@@ -14,10 +14,13 @@
 
 class SelfObject : public Gtk::Frame{
     public:
-        SelfObject(std::string name, int argc, char **argv,Serverproxy &proxy);
+        SelfObject(std::string name, int posx, int posy, int argc,
+            char **argv,Serverproxy &proxy);
         virtual ~SelfObject();
         void AddSlot(std::tuple<std::string, std::string,char,std::string> newslot);
         void RemoveSlot(std::string name);
+        void SetPosition(int posx, int posy);
+        void GetPosition(int &posx, int &posy);
 
     protected:
         //Signal handlers:
@@ -47,13 +50,13 @@ class SelfObject : public Gtk::Frame{
         SlotTreeView m_TreeView;
 
         std::string name;
+        int x,dx;
+        int y,dy;
 
         int argc;
         char **argv;
         Serverproxy &proxy;
 
-        int x;
-        int y;
 
         bool ismoving;
 };

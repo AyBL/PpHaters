@@ -8,6 +8,7 @@
 #include "clientselfobject.h"
 #include "clientnamewindow.h"
 #include "clientvaluewindow.h"
+#include "clientdrawingarea.h"
 #include <map>
 #include <arpa/inet.h>
 
@@ -36,17 +37,16 @@ class WindowObject : public Gtk::Window{
         void on_menu_file_popup_refresh();
         void on_menu_file_popup_close();
 
-        // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+        std::map <std::string,SelfObject*> selfobjects;
+        std::map <std::string,ValueObject*> valueobjects;
+        std::vector <Actions*> actions;
 
         Gtk::Menu m_Menu_Popup;
+        MyDrawingArea area;
         Gtk::Fixed fix;
         int argc;
         char **argv;
-        std::map <std::string,SelfObject*> selfobjects;
-        std::map <std::string,ValueObject*> valueobjects;
         Serverproxy &proxy;
-
-        std::vector <Actions*> actions;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <gtkmm/window.h>
 
 WindowObject::WindowObject(int argc, char **argv,std::string name,Serverproxy &proxy):
-argc(argc),argv(argv),proxy(proxy) {
+area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy) {
 
     auto item = Gtk::manage(new Gtk::MenuItem("_Create Object", true));
     item->signal_activate().connect(
@@ -29,6 +29,10 @@ argc(argc),argv(argv),proxy(proxy) {
 
     add(fix);
 
+    fix.put(area,0,0);
+
+    area.show();
+
     m_Menu_Popup.accelerate(*this);
     m_Menu_Popup.show_all(); //Show all menu items when the menu pops up
 
@@ -39,7 +43,7 @@ WindowObject::~WindowObject(){
 }
 
 bool WindowObject::on_button_press_event(GdkEventButton* button_event){
-    bool return_value = false;
+    bool return_value;
 
     return_value = Window::on_button_press_event(button_event);
 
@@ -72,19 +76,17 @@ void WindowObject::on_menu_file_popup_create(){
     memset(sendbuffer,0,200);
     memcpy(sendbuffer, &x, sizeof(int));
     proxy.SendPositions(sendbuffer);
-    memset(sendbuffer,0,200);
     memcpy(sendbuffer, &y, sizeof(int) );
     proxy.SendPositions(sendbuffer);
-
-    // AddObject(name,x,y);
-
 }
 
 void WindowObject::on_menu_file_popup_refresh(){
     unsigned int i,size;
     size = actions.size();
-    for (i = 0; i < size; i++)
+    for (i = 0; i < size; i++){
         actions[i]->run();
+        delete(actions[i]);
+    }
 
     actions.clear();
 }
@@ -102,17 +104,16 @@ void WindowObject::on_menu_file_popup_close(){
     hide();
 }
 
-void WindowObject::AddObject(std::string name,int x, int y){
-    selfobjects[name] = new SelfObject(name,argc,argv,proxy);
-    fix.put(*selfobjects[name],x,y);
-    selfobjects[name]->show();
-
-}
-
 void WindowObject::AddAction(Actions *action){
     actions.push_back(action);
 }
 
+void WindowObject::AddObject(std::string name,int x, int y){
+    selfobjects[name] = new SelfObject(name,x,y,argc,argv,proxy);
+    fix.put(*selfobjects[name],x,y);
+    selfobjects[name]->show();
+
+}
 
 void WindowObject::RemoveObject(std::string name){
     selfobjects[name]->hide();
@@ -124,7 +125,7 @@ void WindowObject::AddValueObject(std::string name,std::string value,int x, int 
     if (valueobjects.count(value) > 0){
         valueobjects[value]->AddParent(name);
     } else {
-        valueobjects[value] = new ValueObject(value);
+        valueobjects[value] = new ValueObject(value,x,y,proxy);
         valueobjects[value]->AddParent(name);
         fix.put(*valueobjects[value],x,y);
         valueobjects[value]->show();
@@ -137,7 +138,6 @@ void WindowObject::RemoveValueObject(std::string name){
     valueobjects.erase(name);
 }
 
-
 void WindowObject::AddSlot(std::string name, std::tuple<std::string, std::string,char,std::string> newslot){
     selfobjects[name]->AddSlot(newslot);
 }
@@ -147,18 +147,14 @@ void WindowObject::RemoveSlot(std::string nameobject,std::string nameslot){
 }
 
 void WindowObject::Move(std::string nameobject,int x, int y){
-    fix.move(*selfobjects[nameobject],x,y);
+    if (selfobjects.count(nameobject) > 0){
+        fix.move(*selfobjects[nameobject],x,y);
+        selfobjects[nameobject]->SetPosition(x,y);
+    }
+
+    if (valueobjects.count(nameobject) > 0){
+        fix.move(*valueobjects[nameobject],x,y);
+        valueobjects[nameobject]->SetPosition(x,y);
+    }
+
 }
-
-
-
-// bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-//
-//     if (!cola.empty()){
-//         AddObject("name",0,0);
-//
-//     }
-//
-//
-//     return Gtk::Window::on_draw(cr);
-// }

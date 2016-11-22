@@ -169,21 +169,20 @@ void Serverproxy::CommandM(){
 	nameobject = "";
 
 	socket.Receive(&tamanio, sizeof(char));
-	std::cout << "Tamanio: " << (int)tamanio << std::endl;
 	std::memset(bufferanswer, 0, MAXSIZE);
-	if (tamanio != '0'){
+	// if (tamanio != 0){
 			socket.Receive(bufferanswer, (size_t)tamanio);
 			nameobject = std::string(bufferanswer);
-			std::memset(bufferanswer, 0, MAXSIZE);
-	}
-	socket.Receive(&tamanio, sizeof(char));
-	valueslot = std::string(bufferanswer);
+			std::memset(bufferanswer, 0, (size_t)tamanio);
+	// }
 
+	socket.Receive(&tamanio, sizeof(char));
+	socket.Receive(bufferanswer, (size_t)tamanio);
+	valueslot = std::string(bufferanswer);
 	socket.Receive(bufferanswer, 4*sizeof(char));
 	memcpy(&x,bufferanswer,sizeof(int));
 	socket.Receive(bufferanswer, 4*sizeof(char));
 	memcpy(&y,bufferanswer,sizeof(int));
-
 	(*window)->AddAction(new AddValueAction(*window,nameobject,valueslot,x,y));
 }
 
@@ -192,7 +191,6 @@ void Serverproxy::CommandO(){
 	char tamanio;
 	int x,y;
 	socket.Receive(&tamanio, sizeof(char));
-	std::cout << "Tamanio: " << (int)tamanio << std::endl;
 	std::memset(bufferanswer, 0, MAXSIZE);
 	socket.Receive(bufferanswer, (size_t)tamanio);
 	nameobject = std::string(bufferanswer);

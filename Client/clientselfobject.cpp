@@ -121,7 +121,8 @@ void SelfObject::on_button_addslot(){
     if (!newslot.empty()){
         newslot = name + " _addSlot: (| " + newslot +". |).";
 
-        buffer = "A"+std::string(1,newslot.size())+newslot;
+        buffer = "A"+std::string(1,name.size())+name;
+        buffer = buffer + +std::string(1,newslot.size())+newslot;
 
         std::memset(sendbuffer, 0, 500);
 

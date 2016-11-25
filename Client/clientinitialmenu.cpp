@@ -17,8 +17,8 @@ void InitialMenu::load_rows(){
 
 InitialMenu::InitialMenu(bool &run, char *ip,char *port, std::string &imagen):
 m_VBox(Gtk::ORIENTATION_VERTICAL),m_Label_IP("Ingrese IP: ",true),
-m_Label_Port("Ingrese PUERTO: ",true), m_Button_Accept("Accept"),
-m_Button_Quit("Cancel"),run(run),ip(ip),port(port),imagen(imagen){
+m_Label_Port("Ingrese PUERTO: ",true),m_Label_Imagen("Seleccione imagen de fondo: ",true), 
+m_Button_Accept("Accept"),m_Button_Quit("Cancel"),run(run),ip(ip),port(port),imagen(imagen){
     set_title("Initial Menu");
 
     m_Entry_IP.set_max_length(50);
@@ -34,16 +34,16 @@ m_Button_Quit("Cancel"),run(run),ip(ip),port(port),imagen(imagen){
     m_Combo.pack_start(m_Columns.m_col_name);
 
     m_VBox.pack_start(m_HBox);
-    m_VBox.pack_start(m_HBox2);
+    m_VBox.pack_start(m_Label_Imagen);
     m_VBox.pack_start(m_Combo);
-    m_VBox.pack_start(m_HBox3);
+    m_VBox.pack_start(m_HBox2);
 
     m_HBox.pack_start(m_Label_IP);
     m_HBox.pack_start(m_Entry_IP);
     m_HBox.pack_start(m_Label_Port);
     m_HBox.pack_start(m_Entry_Port);
-    m_HBox3.pack_start(m_Button_Accept);
-    m_HBox3.pack_start(m_Button_Quit);
+    m_HBox2.pack_start(m_Button_Accept);
+    m_HBox2.pack_start(m_Button_Quit);
 
     //Add the ComboBox to the window.
     add(m_VBox);

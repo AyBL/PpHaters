@@ -7,7 +7,7 @@
 #include <vector>
 
 int main(int argc, char *argv[]){
-	auto app = Gtk::Application::create(argc, argv, "window.lobbies");
+	auto app = Gtk::Application::create(argc, argv, "initial.menu");
 	auto app1 = Gtk::Application::create(argc, argv, "window.lobbies");
 	auto app2 = Gtk::Application::create(argc, argv, "one.lobby");
 

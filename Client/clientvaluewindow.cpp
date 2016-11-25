@@ -29,7 +29,15 @@ ValueObject::~ValueObject(){
 }
 
 void ValueObject::on_button_quit(){
-    hide();
+    char sendbuffer[500];
+    std::string buffer;
+    buffer = "E" + std::string(1,name.size()) + name;
+
+    std::memset(sendbuffer, 0, 500);
+
+    memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+
+    // proxy.Send(sendbuffer,strlen(sendbuffer));
 }
 
 void ValueObject::on_button_move(){

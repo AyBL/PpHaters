@@ -29,11 +29,11 @@ class InitialMenu : public Gtk::Window{
         Gtk::Box m_VBox;
         Gtk::Box m_HBox;
         Gtk::Box m_HBox2;
-        Gtk::Box m_HBox3;
         Gtk::ComboBox m_Combo;
         Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
         Gtk::Label m_Label_IP;
         Gtk::Label m_Label_Port;
+        Gtk::Label m_Label_Imagen;
         Gtk::Entry m_Entry_IP;
         Gtk::Entry m_Entry_Port;
         Gtk::Button m_Button_Accept;

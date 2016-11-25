@@ -82,10 +82,11 @@ void SelfObject::on_button_message(){
     auto newapp = Gtk::Application::create(argc, argv,"one.message");
     std::string newmessage,buffer;
     char sendbuffer[500];
+    char type = '0';
     MessageWindow message(newmessage);
     newapp->run(message);
 
-    buffer = "M" + std::string(1,name.size()) + name;
+    buffer = "M" + std::string(1,type) + std::string(1,name.size()) + name;
 
     buffer = buffer + std::string(1,newmessage.size()) + newmessage;
 
@@ -93,18 +94,18 @@ void SelfObject::on_button_message(){
 
 	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-    // proxy.Send(sendbuffer,strlen(sendbuffer));
+    proxy.Send(sendbuffer,strlen(sendbuffer));
 
-    std::cout<<"Tamanio: "<< this->get_width() << " " << this->get_height()<<std::endl;
+    // std::cout<<"Tamanio: "<< this->get_width() << " " << this->get_height()<<std::endl;
 
     posx = x + this->get_width()/2;
     posy = y + this->get_height() + 50;
 
     memcpy(sendbuffer, &posx, sizeof(int));
-    // proxy.Send(sendbuffer,sizeof(int));
+    proxy.Send(sendbuffer,sizeof(int));
 
     memcpy(sendbuffer, &posy, sizeof(int));
-    // proxy.Send(sendbuffer,sizeof(int));
+    proxy.Send(sendbuffer,sizeof(int));
 }
 
 void SelfObject::on_button_move(){

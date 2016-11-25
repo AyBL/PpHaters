@@ -2,7 +2,6 @@
 #define MYDRAWINGAREA_H
 
 #include <gtkmm/drawingarea.h>
-#include <gdkmm/pixbuf.h>
 #include <map>
 #include <string>
 #include "clientselfobject.h"
@@ -19,7 +18,6 @@ class MyDrawingArea : public Gtk::DrawingArea{
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
         std::map <std::string,SelfObject*> &selfobjects;
         std::map <std::string,ValueObject*> &valueobjects;
-        Glib::RefPtr<Gdk::Pixbuf> m_image;
 };
 
 #endif

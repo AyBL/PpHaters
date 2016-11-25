@@ -156,12 +156,13 @@ void SlotTreeView::on_menu_file_popup_obtain(){
     std::string buffer;
     int posx, posy;
     char sendbuffer[200];
+    char type = '1';
     std::memset(sendbuffer, 0, 200);
     if (refSelection){
         Gtk::TreeModel::iterator iter = refSelection->get_selected();
         if (iter){
             Glib::ustring name = (*iter)[m_Columns.m_col_name];
-            buffer = "M"+std::string(1,nameselfobject.size());
+            buffer = "M" + std::string(1,type) +std::string(1,nameselfobject.size());
             buffer = buffer + nameselfobject + std::string(1,name.size());
             buffer = buffer + name;
             memcpy(sendbuffer, buffer.c_str(), buffer.size() );

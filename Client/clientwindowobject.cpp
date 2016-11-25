@@ -3,8 +3,8 @@
 #include "clientServerproxy.h"
 #include <gtkmm/window.h>
 
-WindowObject::WindowObject(int argc, char **argv,std::string name,Serverproxy &proxy):
-area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy) {
+WindowObject::WindowObject(std::string imagen, int argc, char **argv,std::string name,Serverproxy &proxy):
+m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy) {
 
     auto item = Gtk::manage(new Gtk::MenuItem("_Create Object", true));
     item->signal_activate().connect(
@@ -28,6 +28,10 @@ area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy) {
     fix.set_border_width(5);
 
     add(fix);
+
+    fix.put(m_Image,0,0);
+
+    m_Image.show();
 
     fix.put(area,0,0);
 

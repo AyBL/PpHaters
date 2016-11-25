@@ -5,6 +5,7 @@
 #include <gtkmm/window.h>
 #include <gtkmm/fixed.h>
 #include <gtkmm/menu.h>
+#include <gtkmm/image.h>
 #include "clientselfobject.h"
 #include "clientnamewindow.h"
 #include "clientvaluewindow.h"
@@ -19,7 +20,7 @@ class Serverproxy;
 
 class WindowObject : public Gtk::Window{
     public:
-        WindowObject(int argc, char **argv, std::string name,Serverproxy &proxy);
+        WindowObject(std::string imagen, int argc, char **argv, std::string name,Serverproxy &proxy);
         virtual ~WindowObject();
         void AddAction(Actions *action);
         void AddObject(std::string name,int x, int y);
@@ -48,6 +49,7 @@ class WindowObject : public Gtk::Window{
         std::vector <Actions*> actions;
 
         Gtk::Menu m_Menu_Popup;
+        Gtk::Image m_Image;
         MyDrawingArea area;
         Gtk::Fixed fix;
         int argc;

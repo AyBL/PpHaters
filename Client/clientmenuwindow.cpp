@@ -83,6 +83,7 @@ void MenuWindow::on_combo_changed(){
 void MenuWindow::on_button_accept(){
     std::string buffer("L");
     char sendbuffer[200];
+    size_t bytestosend;
 
     buffer = buffer + std::string(1,id);
 
@@ -98,11 +99,11 @@ void MenuWindow::on_button_accept(){
 
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-    std::cout << "Index: " << (unsigned int)id << std::endl;
-    std::cout << "Index: " << (unsigned int)buffer[1] / 16777216 << std::endl;
+    bytestosend = strlen(sendbuffer);
+    if (id == 0)
+        bytestosend += 1;
 
-    proxy.Send(sendbuffer,strlen(sendbuffer));
-    
+    proxy.Send(sendbuffer,bytestosend);
     hide();
 }
 

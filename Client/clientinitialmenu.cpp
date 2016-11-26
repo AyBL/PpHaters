@@ -61,6 +61,9 @@ m_Button_Accept("Accept"),m_Button_Quit("Cancel"),run(run),ip(ip),port(port),ima
     
 
     names.push_back("Iron-Throne.jpg");
+    names.push_back("Winter-is-Coming.jpg");
+    names.push_back("Family-Duty-Honor.jpg");
+    names.push_back("We-Do-Not-Sow.jpeg");
 
     this->load_rows();
 

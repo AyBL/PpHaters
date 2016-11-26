@@ -4,5 +4,5 @@ make client
 mv client /usr/bin
 cp edit-move.ico /usr/bin
 cp Iron-Throne.jpg /usr/bin
-cp Winter-is-Coming.jpg /usr/bin
-
+cp Family-Duty-Honor.jpg /usr/bin
+cp We-Do-Not-Sow.jpeg /usr/bin

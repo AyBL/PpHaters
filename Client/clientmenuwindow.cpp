@@ -77,27 +77,32 @@ void MenuWindow::on_combo_changed(){
             uname = row[m_Columns.m_col_name];
             name = uname;
         }
-    }else{
-        std::cout << "invalid iter" << std::endl;
     }
 }
 
 void MenuWindow::on_button_accept(){
     std::string buffer("L");
     char sendbuffer[200];
+
+    buffer = buffer + std::string(1,id);
+
     if (id == 255){
         Glib::ustring uname;
         uname = m_Entry.get_text();
         name = uname;
-    }
-
-    buffer = buffer + std::string(1,id) + std::string(1,name.size()) + name;
+        
+        buffer = buffer + std::string(1,name.size()) + name;
+    } 
 
     std::memset(sendbuffer, 0, 200);
 
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
+    std::cout << "Index: " << (unsigned int)id << std::endl;
+    std::cout << "Index: " << (unsigned int)buffer[1] / 16777216 << std::endl;
+
     proxy.Send(sendbuffer,strlen(sendbuffer));
+    
     hide();
 }
 

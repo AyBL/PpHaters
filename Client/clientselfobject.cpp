@@ -8,8 +8,6 @@ m_Button_Message("Message"),m_Button_AddSlot("Add Slot"),m_Button_Quit("Quit"),
 x(posx),y(posy),m_TreeView(slots,name,proxy,x,y),name(name),argc(argc),
 argv(argv),proxy(proxy),ismoving(false){
 
-    // set_size_request (259, 164);
-
     set_border_width(1);
 
     add(m_VBox);
@@ -66,22 +64,22 @@ SelfObject::~SelfObject(){
 }
 
 void SelfObject::on_button_quit(){
-    char sendbuffer[500];
     std::string buffer;
-    buffer = "E" + std::string(1,name.size()) + name;
+    std::string lobby("lobby");
+    buffer = "E" + std::string(1,lobby.size()) + lobby;
+    buffer = buffer + std::string(1,name.size()) + name;
 
-    std::memset(sendbuffer, 0, 500);
+    std::memset(sendbuffer, 0, MAXSENDBUFFER);
 
 	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-    // proxy.Send(sendbuffer,strlen(sendbuffer));
+    proxy.Send(sendbuffer,strlen(sendbuffer));
 }
 
 void SelfObject::on_button_message(){
     int posx,posy;
     auto newapp = Gtk::Application::create(argc, argv,"one.message");
     std::string newmessage,buffer;
-    char sendbuffer[500];
     char type = '0';
     MessageWindow message(newmessage);
     newapp->run(message);
@@ -90,13 +88,11 @@ void SelfObject::on_button_message(){
 
     buffer = buffer + std::string(1,newmessage.size()) + newmessage;
 
-    std::memset(sendbuffer, 0, 500);
+    std::memset(sendbuffer, 0, MAXSENDBUFFER);
 
 	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
     proxy.Send(sendbuffer,strlen(sendbuffer));
-
-    // std::cout<<"Tamanio: "<< this->get_width() << " " << this->get_height()<<std::endl;
 
     posx = x + this->get_width()/2;
     posy = y + this->get_height() + 50;
@@ -115,16 +111,15 @@ void SelfObject::on_button_move(){
 void SelfObject::on_button_addslot(){
     auto newapp = Gtk::Application::create(argc, argv,"add.slot");
     std::string newslot,buffer;
-    char sendbuffer[500];
     AddSlotWindow addslot(newslot);
     newapp->run(addslot);
     if (!newslot.empty()){
         newslot = name + " _addSlot: (| " + newslot +". |).";
 
-        buffer = "A"+std::string(1,name.size())+name;
+        buffer = "S"+std::string(1,name.size())+name;
         buffer = buffer +std::string(1,newslot.size())+newslot;
 
-        std::memset(sendbuffer, 0, 500);
+        std::memset(sendbuffer, 0, MAXSENDBUFFER);
 
         memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
@@ -147,7 +142,6 @@ void SelfObject::set_moving_state(){
 void SelfObject::set_idle_state(){
     Gtk::Fixed *fix = dynamic_cast<Gtk::Fixed *>(this->get_parent());
     Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
-    char sendbuffer[200];
     std::string buffer;
     int xx,yy;
 
@@ -160,29 +154,38 @@ void SelfObject::set_idle_state(){
 
     buffer = "P"+std::string(1,name.size())+name;
 
-    std::memset(sendbuffer, 0, 200);
+    std::memset(sendbuffer, 0, MAXSENDBUFFER);
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
     proxy.Send(sendbuffer,strlen(sendbuffer));
 
-    memset(sendbuffer,0,200);
     memcpy(sendbuffer, &xx, sizeof(int) );
     proxy.Send(sendbuffer,sizeof(int));
 
-    memset(sendbuffer,0,200);
     memcpy(sendbuffer, &yy, sizeof(int) );
     proxy.Send(sendbuffer,sizeof(int));
 }
 
 void SelfObject::on_checkbox_editable_toggled(){
-  bool edit = m_CheckButton_Editable.get_active();
+    std::string buffer;
+    std::string newname;
+    std::string lobby("lobby");
+    bool edit = m_CheckButton_Editable.get_active();
 
-  m_Entry.set_editable(edit);
+    m_Entry.set_editable(edit);
 
-  if ((!edit) && (m_Entry.get_text() == name)){
+    newname = m_Entry.get_text();
 
-  }
+    if ((!edit) && ( newname != name)){
+        buffer = "R" + std::string(1,lobby.size()) + lobby;
+        buffer = buffer + std::string(1,name.size()) + name;
+
+        std::memset(sendbuffer, 0, MAXSENDBUFFER);
+
+        memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+
+        proxy.Send(sendbuffer,strlen(sendbuffer));    
+    }
 }
-
 
 //Decorator
 bool SelfObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){

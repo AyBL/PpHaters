@@ -39,8 +39,9 @@ class WindowObject : public Gtk::Window{
         //Signal handlers:
         bool on_button_press_event(GdkEventButton* button_event) override;
         void on_menu_file_popup_create();
-        void on_menu_file_popup_refresh();
         void on_menu_file_popup_close();
+        
+        void on_refresh();
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 

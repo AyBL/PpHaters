@@ -23,7 +23,6 @@ class Serverproxy: public Thread{
         Serverproxy(MenuWindow **menu, WindowObject **window);
         virtual void run();
         int Send(char* stringbuffer,size_t length);
-        // int SendPositions(char* stringbuffer);
         //Destruye los elementos de la estructura
         virtual ~Serverproxy();
         int Connect(const char *hostname,const char *port);
@@ -38,13 +37,10 @@ class Serverproxy: public Thread{
         WindowObject **window;
 
         char bufferanswer[MAXSIZE];
-        char buffercommand[MAXSIZE];
         char command;
 
         bool must_be_run;
 
-        void CommandAV();
-        void CommandD();
         void CommandE();
         void CommandL();
         void CommandM();
@@ -52,7 +48,7 @@ class Serverproxy: public Thread{
         void CommandP();
         void CommandR();
         void CommandS();
-
+        void CommandX();
 };
 
 #endif

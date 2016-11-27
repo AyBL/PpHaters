@@ -11,11 +11,6 @@ m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy
         sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_create) );
     m_Menu_Popup.append(*item);
 
-    item = Gtk::manage(new Gtk::MenuItem("_Refresh App", true));
-    item->signal_activate().connect(
-        sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_refresh) );
-    m_Menu_Popup.append(*item);
-
     item = Gtk::manage(new Gtk::MenuItem("_Close App", true));
     item->signal_activate().connect(
         sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_close) );
@@ -84,17 +79,6 @@ void WindowObject::on_menu_file_popup_create(){
     proxy.Send(sendbuffer,sizeof(int));
 }
 
-void WindowObject::on_menu_file_popup_refresh(){
-    unsigned int i,size;
-    size = actions.size();
-    for (i = 0; i < size; i++){
-        actions[i]->run();
-        delete(actions[i]);
-    }
-
-    actions.clear();
-}
-
 void WindowObject::on_menu_file_popup_close(){
 
     std::map <std::string,SelfObject*>::iterator it;
@@ -106,6 +90,17 @@ void WindowObject::on_menu_file_popup_close(){
         selfobjects.erase(name);
     }
     hide();
+}
+
+void WindowObject::on_refresh(){
+    unsigned int i,size;
+    size = actions.size();
+    for (i = 0; i < size; i++){
+        actions[i]->run();
+        delete(actions[i]);
+    }
+
+    actions.clear();
 }
 
 void WindowObject::Invalidate(){
@@ -148,12 +143,6 @@ void WindowObject::AddValueObject(std::string name,std::string value,int x, int 
         valueobjects[value]->show();
     }
 }
-//
-// void WindowObject::RemoveValueObject(std::string name){
-//     valueobjects[name]->hide();
-//     delete(valueobjects[name]);
-//     valueobjects.erase(name);
-// }
 
 void WindowObject::AddSlot(std::string name, std::tuple<std::string, std::string,char,std::string> newslot){
     selfobjects[name]->AddSlot(newslot);
@@ -173,7 +162,6 @@ void WindowObject::Move(std::string nameobject,int x, int y){
         fix.move(*valueobjects[nameobject],x,y);
         valueobjects[nameobject]->SetPosition(x,y);
     }
-
 }
 
 void WindowObject::ChangeNameObject(std::string nameobject, std::string newname){
@@ -187,7 +175,7 @@ void WindowObject::ChangeNameSlot(std::string nameobject,std::string nameslot,st
 }
 
 bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-    on_menu_file_popup_refresh();
+    on_refresh();
 
     return Gtk::Window::on_draw(cr);
 }

@@ -10,6 +10,8 @@
 #include <tuple>
 #include "clientServerproxy.h"
 
+#define MAXSENDBUFFER 500
+
 class SlotTreeView : public Gtk::TreeView{
     public:
         SlotTreeView(std::map<std::string,
@@ -43,6 +45,9 @@ class SlotTreeView : public Gtk::TreeView{
         int &y;
 
         std::vector<std::tuple<std::string,std::string> > nvslots;
+
+    private:
+        char sendbuffer[MAXSENDBUFFER];
 };
 
 #endif

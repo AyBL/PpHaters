@@ -14,6 +14,8 @@
 #include <gtkmm/drawingarea.h>
 #include <string>
 
+#define MAXSENDBUFFER 500
+
 
 class SelfObject : public Gtk::Frame{
     public:
@@ -67,6 +69,9 @@ class SelfObject : public Gtk::Frame{
         bool ismoving;
 
         int dx,dy;
+        
+    private:
+        char sendbuffer[MAXSENDBUFFER];
 };
 
 #endif

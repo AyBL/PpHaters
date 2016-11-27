@@ -66,7 +66,7 @@ Serverproxy::~Serverproxy(){
 }
 
 void Serverproxy::run(){
-	while(must_be_run){
+	while(must_be_run && socket.ValidSocket()){
 		ReceiveAnswer();
 	}
 }

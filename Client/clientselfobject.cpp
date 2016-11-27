@@ -175,16 +175,22 @@ void SelfObject::on_checkbox_editable_toggled(){
 
     newname = m_Entry.get_text();
 
-    if ((!edit) && ( newname != name)){
-        buffer = "R" + std::string(1,lobby.size()) + lobby;
-        buffer = buffer + std::string(1,name.size()) + name;
+    if (!newname.empty()){
+        if ((!edit) && ( newname != name)) {
+            buffer = "R" + std::string(1,lobby.size()) + lobby;
+            buffer = buffer + std::string(1,name.size()) + name;
 
-        std::memset(sendbuffer, 0, MAXSENDBUFFER);
+            std::memset(sendbuffer, 0, MAXSENDBUFFER);
 
-        memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+            memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-        proxy.Send(sendbuffer,strlen(sendbuffer));    
+            proxy.Send(sendbuffer,strlen(sendbuffer));    
+        }    
+    } else {
+        m_Entry.set_text(name);
     }
+
+    
 }
 
 //Decorator

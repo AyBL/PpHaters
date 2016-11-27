@@ -1,8 +1,40 @@
 #!/bin/bash
 
-make client
-mv client /usr/bin
-cp edit-move.ico /usr/bin
-cp Iron-Throne.jpg /usr/bin
-cp Family-Duty-Honor.jpg /usr/bin
-cp We-Do-Not-Sow.jpeg /usr/bin
+moveclient(){
+	cp client /usr/bin
+	cp edit-move.ico /usr/bin
+	cp Iron-Throne.jpg /usr/bin
+	cp Family-Duty-Honor.jpg /usr/bin
+	cp We-Do-Not-Sow.jpeg /usr/bin
+}
+
+moveserver(){
+	cp server /usr/bin
+}
+
+moveall(){
+	moveclient
+	moveserver
+}
+
+
+if [ $# -eq 0 ] ; then
+	echo "Ingrese Install -h por ayuda."	
+elif [ $1 == "-h" ] ; then
+	echo "Ayuda:"
+	echo "Install all: Instala todo."
+	echo "Install client: Instala cliente."
+	echo "Install server: Instala server."
+	echo "Install clean: limpia todo."
+elif [ $1 == "all" ] ; then
+	make
+	makeall
+elif [ $1 == "clean" ] ; then
+	make clean
+elif [ $1 == "client" ] ; then
+	make client
+	moveclient
+elif [ $1 == "server" ] ; then
+	make server
+	moveserver
+fi

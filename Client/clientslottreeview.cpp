@@ -125,16 +125,20 @@ void SlotTreeView::on_menu_file_popup_accept(){
             nameant = std::get<0>(nvslotsaux);
             valueant = std::get<1>(nvslotsaux);
 
-            if (name != nameant){
-                namebuffer = "R"+ std::string(1,nameselfobject.size());
-                namebuffer = namebuffer + nameselfobject;
-                namebuffer = namebuffer + std::string(1,nameant.size());
-                namebuffer = namebuffer + nameant;
-                namebuffer = namebuffer + std::string(1,name.size());
-                namebuffer = namebuffer + name;
-                memcpy(sendbuffer, namebuffer.c_str(), namebuffer.size() );
-                proxy.Send(sendbuffer,strlen(sendbuffer));
-                std::memset(sendbuffer, 0, namebuffer.size());
+            if (!name.empty()){
+                if (name != nameant){
+                    namebuffer = "R"+ std::string(1,nameselfobject.size());
+                    namebuffer = namebuffer + nameselfobject;
+                    namebuffer = namebuffer + std::string(1,nameant.size());
+                    namebuffer = namebuffer + nameant;
+                    namebuffer = namebuffer + std::string(1,name.size());
+                    namebuffer = namebuffer + name;
+                    memcpy(sendbuffer, namebuffer.c_str(), namebuffer.size() );
+                    proxy.Send(sendbuffer,strlen(sendbuffer));
+                    std::memset(sendbuffer, 0, namebuffer.size());
+                }
+            } else {
+                (*iter)[m_Columns.m_col_name] = nameant;
             }
 
             if (mut && (value != valueant)){

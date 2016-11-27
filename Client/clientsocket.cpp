@@ -40,7 +40,6 @@ int Socket::BindAndListen(const char* host_name,char* port){
       close(this->skt);
       return 1;
    }
-
    return 0;
 }
 
@@ -111,9 +110,6 @@ int Socket::Send(const char* buffer, size_t length){
 int Socket::Receive(char* buffer, size_t length){
   int s = 1;
   s = recv(this->skt,buffer, length, MSG_NOSIGNAL);
-  // for (unsigned int i = 0; i < length && s > 0; ++i) {
-  //   s = recv(this->skt,&buffer[i], 1, MSG_NOSIGNAL);
-  // }
   return s;
 }
 

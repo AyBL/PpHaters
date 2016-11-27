@@ -31,8 +31,6 @@ int main(int argc, char *argv[]){
 
 	if (!run){
 		std::cout << "Cancelado" << std::endl;
-		delete(menuwindow);
-		delete(window);
 		return 1;
 	}
 

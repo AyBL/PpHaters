@@ -10,6 +10,7 @@
 #include "clientnamewindow.h"
 #include "clientvaluewindow.h"
 #include "clientdrawingarea.h"
+#include "clienterrorwindow.h"
 #include <map>
 #include <arpa/inet.h>
 
@@ -33,6 +34,7 @@ class WindowObject : public Gtk::Window{
         void ChangeNameObject(std::string nameobject, std::string newname);
         void ChangeNameSlot(std::string nameobject, std::string nameslot, std::string newname);
         void Invalidate();
+        void ErrorMessage(std::string message);
 
 
     protected:

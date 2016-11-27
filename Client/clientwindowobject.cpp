@@ -20,8 +20,6 @@ m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy
     set_border_width(1);
     set_default_size(WIDTH, HEIGHT);
 
-    fix.set_border_width(5);
-
     add(fix);
 
     fix.put(m_Image,0,0);
@@ -178,4 +176,10 @@ bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     on_refresh();
 
     return Gtk::Window::on_draw(cr);
+}
+
+void WindowObject::ErrorMessage(std::string message){
+    auto newapp = Gtk::Application::create(argc, argv,"error.message");
+    ErrorWindow error(message);
+    newapp->run(error);    
 }

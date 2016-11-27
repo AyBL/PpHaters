@@ -10,9 +10,13 @@ void InitialMenu::load_rows(){
         row = *(m_refTreeModel->append());
         row[m_Columns.m_col_id] = i;
         row[m_Columns.m_col_name] = names[i];
-    }
 
-    // m_Combo.set_active(row);
+        if ( i == 0){
+            m_Combo.set_active(row);
+            nameimagenaux = names[i];
+        }
+
+    }
 }
 
 InitialMenu::InitialMenu(bool &run, char *ip,char *port, std::string &imagen):

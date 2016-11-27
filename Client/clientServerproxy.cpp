@@ -234,6 +234,5 @@ void Serverproxy::CommandX(){
 	socket.Receive(&tamanio, sizeof(char));
 	socket.Receive(bufferanswer, (size_t)tamanio);
 	error = std::string(bufferanswer);
-
-	std::cout << error << std::endl;	
+	(*window)->ErrorMessage(error);	
 }

@@ -183,3 +183,7 @@ void WindowObject::ErrorMessage(std::string message){
     ErrorWindow error(message);
     newapp->run(error);    
 }
+
+void WindowObject::CloseApp(){
+    on_menu_file_popup_close();    
+}

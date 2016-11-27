@@ -2,8 +2,8 @@
 #include "clientwindowobject.h"
 #include <tuple>
 
-Serverproxy::Serverproxy(MenuWindow **menu, WindowObject **window):socket(0),
-menu(menu),window(window),must_be_run(true){
+Serverproxy::Serverproxy(MenuWindow **menu, WindowObject **window)
+:socket(0),menu(menu),window(window),must_be_run(true){
 }
 
 int Serverproxy::Connect(const char *hostname,const  char *port){
@@ -66,9 +66,13 @@ Serverproxy::~Serverproxy(){
 }
 
 void Serverproxy::run(){
-	while(must_be_run && socket.ValidSocket()){
-		ReceiveAnswer();
+	int s = 1;
+	while(must_be_run && (s != 0)){
+		s = ReceiveAnswer();
 	}
+
+	if (s == 0)
+		(*window)->CloseApp();	
 }
 
 void Serverproxy::Stop(){

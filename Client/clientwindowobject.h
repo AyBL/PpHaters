@@ -35,6 +35,7 @@ class WindowObject : public Gtk::Window{
         void ChangeNameSlot(std::string nameobject, std::string nameslot, std::string newname);
         void Invalidate();
         void ErrorMessage(std::string message);
+        void CloseApp();
 
 
     protected:

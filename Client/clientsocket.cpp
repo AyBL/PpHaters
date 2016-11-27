@@ -108,9 +108,7 @@ int Socket::Send(const char* buffer, size_t length){
 }
 
 int Socket::Receive(char* buffer, size_t length){
-  int s = 1;
-  s = recv(this->skt,buffer, length, MSG_NOSIGNAL);
-  return s;
+  return recv(this->skt,buffer, length, MSG_NOSIGNAL);
 }
 
 bool Socket::ValidSocket() {

@@ -26,10 +26,11 @@ int main(int argc, char *argv[]) {
 		Server s(argv[1], argv[2]);
 		s.start();
 		char esQ;
-		while ((std::cin >> esQ && esQ != 'q')) {
-		}
+		while ((std::cin >> esQ && esQ != 'q')) {}
 		s.stop();
+		std::cout<<"entra join"<<std::endl;
 		s.join();
+		std::cout<<"sale main"<<std::endl;
 	}
 	return 0;
 }

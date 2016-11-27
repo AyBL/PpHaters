@@ -8,12 +8,10 @@ class Server: public Thread{
 private:
 	const char* ip;
 	const char* port;
-	const char* scriptFile;
 	Socket sktPasivo;
 	bool terminar = false;
 public:
 	/* inicializa los atributos */
-	Server(const char* script);
 	Server(const char* ip,const char* porta);
 
 	virtual ~Server();

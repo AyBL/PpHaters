@@ -4,22 +4,6 @@
 #include <vector>
 #include <mutex>
 
-Server::Server(const char* script) :
-		scriptFile(script) {
-//	std::fstream arch;
-//	arch.open(argv[1]);
-//	VirtualMachine vm("lobby");
-//	//		vm.JsonLoad("salida1.txt");
-//	try {
-//		Parser p(&arch, vm);
-//		bool pudoParsear = p.script();
-//		arch.close();
-//	} catch (...) {
-//		std::cout << "SYNTAX ERROR" << std::endl;
-//	}
-//	vm.JsonSave("salida1.txt");
-}
-
 Server::Server(const char* ip, const char* port) :
 		ip(ip), port(port) {
 }
@@ -51,10 +35,9 @@ void Server::run() {
 //				}else {indexMV = 0; }
 //			}
 				std::cout << "SERVER ANTES DE PUSHEAR NUEVO CLIENTE" << std::endl;
-				std::cout << "A MV: "<<  MVs[(unsigned)indexMV].getName() << std::endl;
+				std::cout << "A MV: "<<  MVs[indexMV].getName() << std::endl;
 				clientes.push_back(
 						new ClientManager(std::move(proxy), MVs[indexMV]));
-
 				clientes[clientes.size() - 1]->start();
 			}
 		}

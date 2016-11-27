@@ -38,6 +38,9 @@ public:
 	void addCode(std::string newCode);
 
 	ObjectMasCapo* lookup(std::string slotName);
+	//Ver si cambiar
+	ObjectMasCapo* lookup(const std::string &slotName,
+			CustomObject* &container);
 
 	ObjectMasCapo* execute(std::string method, std::map<std::string,
 			ObjectMasCapo*> arguments);
@@ -48,7 +51,7 @@ public:
 	
 	// asco pero bueno
 	ObjectMasCapo* getSlot(int slotIndex=-1);
-
+	unsigned numberOfSlots();
 	
 	//PARA SERIALIZACION
 	Json::Value toJson();

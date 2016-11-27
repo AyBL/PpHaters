@@ -133,8 +133,9 @@ void ProxyCliente::sendPosition(uint32_t posX, uint32_t posY) {
 	skt.send(buffer, sizeof(uint32_t) * 2);
 }
 
-void ProxyCliente::commandA(std::string &objectName, std::string &stringToParse) { //????? jajajaj el nombre
-	objectName= getName();
+void ProxyCliente::commandA(std::string &objectName,
+		std::string &stringToParse) { //????? jajajaj el nombre
+	objectName = getName();
 	stringToParse = getName();
 }
 
@@ -143,7 +144,7 @@ void ProxyCliente::sendCommandA(std::string objectName, std::string slotName,
 	//faltan todos los chequeos de errores
 	std::cout << "ProxyCliente: sendCommandA " << objectName << " " << slotName
 			<< " " << value << " " << flag << " " << slotParent << std::endl;
-	sendCommand('A');
+	sendCommand('S');
 	sendName(objectName);
 	sendName(slotName);
 	sendName(value);
@@ -173,7 +174,7 @@ void ProxyCliente::sendCommandP(std::string objectName, uint32_t posX,
 
 char ProxyCliente::commandM(std::string &ObjectName, std::string &SlotName,
 		uint32_t &newPosX, uint32_t &newPosY) {
-	char type=recvMessage();
+	char type = recvMessage();
 	ObjectName = getName();
 	SlotName = getName();
 	getPosition(newPosX, newPosY);
@@ -188,8 +189,39 @@ void ProxyCliente::sendCommandM(std::string objectName, std::string SlotName,
 	sendPosition(posX, posY);
 }
 
+void ProxyCliente::commandE(std::string &ObjectName, std::string &slotName) {
+	ObjectName = getName();
+	slotName = getName();
+}
+
+void ProxyCliente::sendCommandE(const std::string ObjectName,
+		std::string slotName) {
+	sendCommand('E');
+	sendName(ObjectName);
+	sendName(slotName);
+}
+
 bool ProxyCliente::masConsultas() {
 	return clienteEnviando;
+}
+
+void ProxyCliente::commandR(std::string &ObjectName, std::string &slotName,
+		std::string &newSlotName) {
+	ObjectName = getName();
+	slotName = getName();
+	newSlotName = getName();
+}
+void ProxyCliente::sendCommandR(const std::string ObjectName,
+		std::string slotName, std::string newSlotName) {
+	sendCommand('R');
+	sendName(ObjectName);
+	sendName(slotName);
+	sendName(newSlotName);
+}
+
+void ProxyCliente::sendError(const std::string errorMessage){
+	sendCommand('X');
+	sendName(errorMessage);
 }
 
 ProxyCliente::ProxyCliente(ProxyCliente&& other) {
@@ -205,3 +237,4 @@ ProxyCliente& ProxyCliente::operator=(ProxyCliente&& other) {
 	clienteEnviando = other.clienteEnviando;
 	return *this;
 }
+

@@ -26,6 +26,9 @@ private:
 	void commandM();
 	void commandC();
 	void commandE();
+	void commandR();
+
+	void sendAll();
 };
 
 #endif /* SERVER_CLIENTMANAGER_H_ */

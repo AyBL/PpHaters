@@ -30,7 +30,9 @@
 //		enum TipoSlot { ARG, PADRE, MUTABLE, INMUTABLE};
 		ObjectMasCapo *_receiver;
 		std::string _messageName;
+		bool nullReceiver;
 		const std::set<std::string> OPERADORES{"+", "-", "*", "/", "!=", "==", ":"};
+		const std::set<std::string> NATIVOS{"print", "clone", "_addSlot", "_RemoveSlots"};
 
 	public:
 		Parser(std::istream *stream, VirtualMachine &VM);
@@ -39,7 +41,7 @@
 		bool hayParentesis2();
 		bool hayComillas();
 		bool hayPipe();
-		bool hayDelimitador();
+		bool dosPuntos(bool esExpCP);
 		bool finStringCodigo();
 		bool esMutable();
 		bool getStringCodigo(std::string &codigo);

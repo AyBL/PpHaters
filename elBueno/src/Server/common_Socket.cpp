@@ -108,7 +108,7 @@ int Socket::send(const char *buffer, int length) {
 		}
 	}
 	if (SinError) {
-		std::cout<<"+++++++++enviado: "<< buffer<<std::endl;
+//		std::cout<<"+++++++++enviado: "<< buffer<<std::endl;
 		return enviado;
 	}
 //	std::cout<<"++++++++++++++enviado: "<< buffer<<std::endl;
@@ -131,7 +131,7 @@ int Socket::recv(char *buffer, int length) {
 		recibido += s;
 	}
 	if (SinError) {
-		std::cout<<"++++++++recibido: "<< buffer<<std::endl;
+//		std::cout<<"++++++++recibido: "<< buffer<<std::endl;
 		return recibido;
 	}
 //	std::cout<<"++++++++++++++recibido: "<< buffer<<std::endl;

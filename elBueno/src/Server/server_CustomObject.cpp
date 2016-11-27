@@ -10,8 +10,14 @@ CustomObject::CustomObject(std::string name) :
 
 CustomObject::~CustomObject() {
 
+
+	std::cout << "Entra a destructor Custom de puntero: " << this << std::endl;
+
 	std::cout<<"Entra a destructor Custom de " << this->getName() << " con slot size: "<<slots.size()<<std::endl;
 	if (!(this->isParent())){
+
+		std::cout << "Entra a que: " << this->getName() << " no es parent" << std::endl;
+
 		for(auto const &it : slots){
 			if (it.second != NULL){
 				delete it.second;
@@ -62,14 +68,20 @@ ObjectMasCapo* CustomObject::addSlot(std::string slotName, ObjectMasCapo* newSlo
 
 		CustomObject *slotParent = new CustomObject(slotName);
 		slotParent->notTemp();
+
+
+		std::cout << "Slot parent: " << slotParent << std::endl;
+
 //		CustomObject *other = static_cast<CustomObject*>(newSlot);
 
 		//VER SI BIEN
 		slotParent->slots[newSlot->getName()] = newSlot;
+		slotParent->index.push_back(newSlot->getName());
 //		slotParent->slots.push_back(newSlot);
 
 		slotParent->setFlags(flag);
 		this->slots[slotName] = slotParent;
+		this->index.push_back(slotName);
 //		this->slots.push_back(slotParent);
 		return slotParent;
 	} else {
@@ -77,6 +89,7 @@ ObjectMasCapo* CustomObject::addSlot(std::string slotName, ObjectMasCapo* newSlo
 		newSlot->setFlags(flag);
 		newSlot->notTemp();
 		this->slots[slotName] = newSlot;
+		this->index.push_back(slotName);
 //		this->slots.push_back(newSlot);
 		return newSlot;
 	}
@@ -93,6 +106,7 @@ ObjectMasCapo* CustomObject::addSlot(
 		it.second->notTemp();
 
 		this->slots[it.second->getName()] = it.second;
+		this->index.push_back(it.second->getName());
 		ultimo = it.second;
 		it.second = NULL;
 	}
@@ -121,14 +135,25 @@ void CustomObject::removeSlot(const std::string &slotName) {
 //	delete this->slots.at(slotName);
 
 	//Lo pongo como temp asi lo borra el garbage collector
+	//Si no existe el slot, .at lanza una excepcion
 	this->slots.at(slotName)->yesTemp();
 
-	std::cout << "Antes de remover tamaño slots: " << this->slots.size() << std::endl;
+	std::cout << "Antes de remover tamaño index: " << this->index.size() << std::endl;
 	std::cout << "-----SLOT A REMOVER: " << this->slots.at(slotName)->getName() << std::endl;
 
 	this->slots.erase(slotName);
 
-	std::cout << "Despues de remover tamaño slots: " << this->slots.size() << std::endl;
+	std::vector<std::string>::iterator it;
+	it = index.begin();
+	std::string s = (*it);
+	while (s != slotName && it != index.end()) {
+		++it;
+		s =(*it);
+	}
+	index.erase(it);
+
+
+	std::cout << "Despues de remover tamaño index: " << this->index.size() << std::endl;
 
 //    if (slots.size() > 0) {
 //        std::vector<ObjectMasCapo*>::iterator it;
@@ -143,19 +168,26 @@ void CustomObject::removeSlot(const std::string &slotName) {
 }
 
 bool CustomObject::changeSlot(const std::string &slotName, ObjectMasCapo* newSlot){
-	//Uso .at asi si no existe, lanza una excepcion
-	ObjectMasCapo *slotToChange = this->slots.at(slotName);
+
+	std::cout << "Entra a changeSlot a cambiar: " << slotName << std::endl;
+
+	CustomObject *container;
+	ObjectMasCapo *slotToChange = this->lookup(slotName, container);
+
+	std::cout << "Container: " << container->getName() << std::endl;
+
 	if ((slotToChange->getFlag() != 'I') && (slotToChange->getFlag() != 'P')){
 		newSlot->rename(slotName);
 		newSlot->notTemp();
-		this->slots[slotName] = newSlot;
+//		this->slots[slotName] = newSlot;
+		container->slots[slotName] = newSlot;
 		//Agregar a vector objects created?
 		//Marco el objeto a reemplazar como temp para que sea eliminado despues
 		//por el garbage collector
-//		delete slotToChange;
+
 		slotToChange->yesTemp();
 
-		std::cout << "Slot nuevo: " << slots.at(slotName)->getName() << std::endl;
+		std::cout << "Slot nuevo: " << container->slots.at(slotName)->getName() << std::endl;
 
 		return true;
 	}else{
@@ -168,21 +200,31 @@ bool CustomObject::changeSlot(const std::string &slotName, ObjectMasCapo* newSlo
 
 ObjectMasCapo* CustomObject::clone(
 		std::map<std::string, ObjectMasCapo*> arguments) {
-	//Debe agregarse al vector de objects created de la vm en algun momento
 	std::cout << "CustomObject clone" << std::endl;
 	CustomObject *newObj = new CustomObject(this->getName());
-	newObj->index = this->index;
+//	newObj->index = this->index;
 	newObj->addCode(this->getCode());
 	//Ver si ponerle la misma pos o ponerle 0
 	newObj->setPosition(this->getPositionX(), this->getPositionY());
 	newObj->setFlags(this->getFlag());
 	if (this->getFlag() != 'P'){
 		for(auto const &it : this->slots){
-			newObj->slots[it.first] = it.second->clone(arguments);
+//			newObj->slots[it.first] = it.second->clone(arguments);
+			if (it.second->getFlag() != 'P')
+				newObj->addSlot(it.first, it.second->clone(arguments),
+					it.second->getFlag());
+			else{
+				//Como addSlot para los objs padres les hace un obj contenedor
+				//y aca ya esta hecho, directamente agrego
+				newObj->slots[it.first] = it.second->clone(arguments);
+				newObj->slots[it.first]->notTemp();
+				newObj->index.push_back(it.first);
+			}
 		}
 	}else{
 		for(auto const &it : this->slots){
 			//Le asigno el puntero que apunta al padre
+			//Ver si se libera bien o deberia usar addSLot
 			newObj->slots[it.first] = it.second;
 		}
 	}
@@ -200,6 +242,51 @@ ObjectMasCapo* CustomObject::print(
 
 void CustomObject::addCode(std::string newCode) {
 	this->code = newCode;
+}
+
+ObjectMasCapo* CustomObject::lookup(const std::string &slotName, CustomObject* &container) {
+// POR AHORA SOLO RETONA SI ESTA DENTRO DEL EL QUE LO LLAMA
+// ME FALTA HACERLO RECUSIVO CON LOS PARENT
+	std::vector<CustomObject*> parent;
+	if (slots.find(slotName) != slots.end()){
+		container = this;
+		return slots.at(slotName);
+	}else{
+		for(auto const &it : slots){
+			if (it.second->isParent())
+				parent.push_back(static_cast<CustomObject*>(it.second));
+		}
+	}
+//	unsigned i = 0;
+//	while (i < slots.size()) {
+//		if (slots[i]->getName() == slotName) {
+//			return slots[i];
+//		} else {
+//			if (slots[i]->isParent()) {
+////				slots[i]->lookup(slotName);
+//				parent.push_back(static_cast<CustomObject*>(slots[i]));
+//			}
+//		}
+//		++i;
+//}
+	ObjectMasCapo *aux, *resultado = NULL;
+	CustomObject *actualParent;
+	bool encontrado = false;
+	for (unsigned i = 0; i < parent.size(); ++i) {
+		actualParent = static_cast<CustomObject*>(parent[i]->slots.begin()->second);
+		aux = actualParent->lookup(slotName);
+		if (aux != NULL) {
+			if (!encontrado) {
+				encontrado = true;
+				container = actualParent;
+				resultado = aux; //
+			} else {
+				std::cout << "ERROR dos parent con el mismo slot" << std::endl;
+//				resultado = NULL; //cositas1//
+			}
+		}
+	}
+	return resultado;
 }
 
 ObjectMasCapo* CustomObject::lookup(std::string slotName) {
@@ -266,6 +353,10 @@ void CustomObject::setPosition(int posX, int posY){
 	positionX=posX;
 	positionY=posY;
 }
+
+unsigned CustomObject::numberOfSlots(){
+	return this->slots.size();
+}
 //ESTE METODO POR AHI SE PUEDE HACER GUARDANDO EL CONTEXTO ANTERIOR EN UN ATRIBUTO DE LA VM
 //Y CUANDO SE NECESITE SE PIDE CON UN GET
 ObjectMasCapo* CustomObject::getSlot(int slotIndex){
@@ -280,7 +371,7 @@ std::string CustomObject::getValue(){
 	return this->getCode();
 }
 
-//PASAR A VERSION CON MAP Y PROBAR TODO
+
 Json::Value CustomObject::toJson(){
 	//Json::Value value(Json::objectValue);
 	Json::Value customObj_json(Json::objectValue), slots_json(Json::arrayValue);

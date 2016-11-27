@@ -33,7 +33,6 @@ public:
 	uint8_t selectedLobby();
 	void getPosition(uint32_t &posX, uint32_t &posY);
 
-
 	void sendCommand(char commandID);
 
 	void commandL();
@@ -42,7 +41,7 @@ public:
 	void sendCommandO(std::string name, uint32_t posX, uint32_t posY);
 
 //	void commandO(std::string &name, uint32_t &posX,uint32_t &posY);
-	void commandA(std::string &objectName,std::string &stringToParse);
+	void commandA(std::string &objectName, std::string &stringToParse);
 	void sendCommandA(std::string ObjectName, std::string SlotName,
 			std::string value, char flag, std::string slotParent);
 
@@ -55,10 +54,22 @@ public:
 	void sendCommandM(std::string ObjectName, std::string SlotName,
 			uint32_t posX, uint32_t posY);
 
+	void commandE(std::string &ObjectName, std::string &slotName);
+	void sendCommandE(const std::string ObjectName, std::string slotName);
+
+	void sendError(const std::string errorMessage);
+
+//	Enviar	R	tam	nomobj	tam	nomslot	tam	nuevo nombre
+//	Recibir	R	tam	nomobj	tam	nomslot	tam	nuevo nombre
+	void commandR(std::string &ObjectName, std::string &slotName,
+			std::string &newSlotName);
+	void sendCommandR(const std::string ObjectName, std::string slotName,
+			std::string newSlotName);
+
 	//------- por moviento --------//
 	ProxyCliente(const ProxyCliente&) = delete;
 	ProxyCliente& operator=(const ProxyCliente&) = delete;
-	ProxyCliente(ProxyCliente&& other) ;
+	ProxyCliente(ProxyCliente&& other);
 	ProxyCliente& operator=(ProxyCliente&& other);
 
 	//-----------------------

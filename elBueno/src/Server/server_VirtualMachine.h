@@ -7,6 +7,7 @@
 #include "server_ObjectMasCapo.h"
 #include "server_NumberObject.h"
 #include "server_CustomObject.h"
+#include "server_NilObject.h"
 #include "server_BoolObject.h"
 #include "server_StringObject.h"
 
@@ -45,6 +46,7 @@ public:
 	//---------------//
 
 	CustomObject* createObject(std::string name); // customObject
+	NilObject* createNilObject(const std::string &name);
 	StringObject* createObject(std::string name, std::string value);
 	NumberObject* createObject(std::string name, double value);
 	BoolObject* createObject(std::string name, bool value);
@@ -60,9 +62,8 @@ public:
 
 	VirtualMachine& operator=(VirtualMachine&& other);
 
-	CustomObject *getLobby(){
-		return lobby;
-	}
+	CustomObject* getLobby() const;
+
 	//PARA SERIALIZACION
 	Json::Value toJson();
 	void JsonSave(const std::string &nombreArch);

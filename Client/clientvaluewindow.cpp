@@ -31,13 +31,15 @@ ValueObject::~ValueObject(){
 void ValueObject::on_button_quit(){
     char sendbuffer[500];
     std::string buffer;
-    buffer = "E" + std::string(1,name.size()) + name;
+    std::string lobby("lobby");
+    buffer = "E" + std::string(1,lobby.size()) + lobby;
+    buffer = buffer + std::string(1,name.size()) + name;
 
     std::memset(sendbuffer, 0, 500);
 
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-    // proxy.Send(sendbuffer,strlen(sendbuffer));
+    proxy.Send(sendbuffer,strlen(sendbuffer));
 }
 
 void ValueObject::on_button_move(){
@@ -74,15 +76,13 @@ void ValueObject::set_idle_state(){
 
     std::memset(sendbuffer, 0, 200);
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
-    // proxy.Send(sendbuffer,strlen(sendbuffer));
+    proxy.Send(sendbuffer,strlen(sendbuffer));
 
-    memset(sendbuffer,0,200);
     memcpy(sendbuffer, &xx, sizeof(int) );
-    // proxy.Send(sendbuffer,sizeof(int));
+    proxy.Send(sendbuffer,sizeof(int));
 
-    // memset(sendbuffer,0,200);
     memcpy(sendbuffer, &yy, sizeof(int) );
-    // proxy.Send(sendbuffer,sizeof(int));
+    proxy.Send(sendbuffer,sizeof(int));
 }
 
 //Decorator

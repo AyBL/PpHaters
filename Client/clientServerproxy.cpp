@@ -3,14 +3,13 @@
 #include <tuple>
 
 Serverproxy::Serverproxy(MenuWindow **menu, WindowObject **window)
-:socket(0),menu(menu),window(window),must_be_run(true){
+:menu(menu),window(window),must_be_run(true){
 }
 
 int Serverproxy::Connect(const char *hostname,const  char *port){
-	int s;
-	s = socket.Connect(hostname, port);
-	if (s != 0){
-		socket.Shutdown();
+	socket.connect(hostname, port);
+	if (!socket.isValid()){
+		socket.shutdown();
 		return 1;
 	}
 	return 0;
@@ -18,7 +17,7 @@ int Serverproxy::Connect(const char *hostname,const  char *port){
 
 int Serverproxy::Send(char *sendbuffer,size_t length){
 
-	socket.Send(sendbuffer, length);
+	socket.send(sendbuffer, length);
 
 	return 0;
 }
@@ -26,7 +25,7 @@ int Serverproxy::Send(char *sendbuffer,size_t length){
 int Serverproxy::ReceiveAnswer(){
 	int s;
 
-	s = socket.Receive(&command, COMMANDSIZE);
+	s = socket.recv(&command, COMMANDSIZE);
 	if (s>0){
 		std::cout << "Comando: "<<command << std::endl;
 	    switch (command) {
@@ -62,23 +61,23 @@ int Serverproxy::ReceiveAnswer(){
 }
 
 Serverproxy::~Serverproxy(){
-	socket.Shutdown();
+	socket.shutdown();
 }
 
 void Serverproxy::run(){
-	int s = 1;
-	while(must_be_run && (s != 0)){
+	int s = 0;
+	while(must_be_run && (s != -1)){
 		s = ReceiveAnswer();
 	}
 
-	if (s == 0)
+	if (s == -1)
 		(*window)->CloseApp();	
 }
 
 void Serverproxy::Stop(){
 	if (must_be_run){
 		must_be_run = false;
-		socket.Shutdown();
+		socket.shutdown();
 	}
 }
 
@@ -86,12 +85,12 @@ void Serverproxy::CommandE(){
 	std::string nameobject1,nameobject2;
 	char tamanio;
 	std::memset(bufferanswer, 0, MAXSIZE);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject1 = std::string(bufferanswer);
 	std::memset(bufferanswer, 0, tamanio);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject2 = std::string(bufferanswer);
 	if (nameobject1 == "lobby"){
 		(*window)->AddAction(new RemoveObjectAction(*window,nameobject2));	
@@ -104,12 +103,12 @@ void Serverproxy::CommandL(){
 	unsigned char i, ucantidad;
 	char cantidad, tamanio;
 
-	socket.Receive(&cantidad, sizeof(char));
+	socket.recv(&cantidad, sizeof(char));
 	ucantidad = (unsigned char) cantidad;
 	for (i = 0; i < ucantidad; i++){
-		socket.Receive(&tamanio, sizeof(char));
+		socket.recv(&tamanio, sizeof(char));
 		std::memset(bufferanswer, 0, MAXSIZE);
-		socket.Receive(bufferanswer, (size_t)tamanio);
+		socket.recv(bufferanswer, (size_t)tamanio);
 		(*menu)->AddLobbies(std::make_tuple(i,bufferanswer));
 	}
 }
@@ -119,19 +118,19 @@ void Serverproxy::CommandM(){
 	int x,y;
 	nameobject = "";
 
-	socket.Receive(&tamanio, sizeof(char));
+	socket.recv(&tamanio, sizeof(char));
 	std::memset(bufferanswer, 0, MAXSIZE);
 
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject = std::string(bufferanswer);
 	std::memset(bufferanswer, 0, (size_t)tamanio);
 
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	valueslot = std::string(bufferanswer);
-	socket.Receive(bufferanswer, 4*sizeof(char));
+	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&x,bufferanswer,sizeof(int));
-	socket.Receive(bufferanswer, 4*sizeof(char));
+	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&y,bufferanswer,sizeof(int));
 	(*window)->AddAction(new AddValueAction(*window,nameobject,valueslot,x,y));
 }
@@ -140,13 +139,13 @@ void Serverproxy::CommandO(){
 	std::string nameobject,nameslot;
 	char tamanio;
 	int x,y;
-	socket.Receive(&tamanio, sizeof(char));
+	socket.recv(&tamanio, sizeof(char));
 	std::memset(bufferanswer, 0, MAXSIZE);
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject = std::string(bufferanswer);
-	socket.Receive(bufferanswer, 4*sizeof(char));
+	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&x,bufferanswer,sizeof(int));
-	socket.Receive(bufferanswer, 4*sizeof(char));
+	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&y,bufferanswer,sizeof(int));
 	(*window)->AddAction(new AddObjectAction(*window,nameobject,x,y));
 }
@@ -155,13 +154,13 @@ void Serverproxy::CommandP(){
 	std::string nameobject;
 	char tamanio;
 	int x,y;
-	socket.Receive(&tamanio, sizeof(char));
+	socket.recv(&tamanio, sizeof(char));
 	std::memset(bufferanswer, 0, MAXSIZE);
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject = std::string(bufferanswer);
-	socket.Receive(bufferanswer, sizeof(int));
+	socket.recv(bufferanswer, sizeof(int));
 	memcpy(&x,bufferanswer,sizeof(int));
-	socket.Receive(bufferanswer, sizeof(int));
+	socket.recv(bufferanswer, sizeof(int));
 	memcpy(&y,bufferanswer,sizeof(int));
 
 	(*window)->Move(nameobject,x,y);
@@ -172,16 +171,16 @@ void Serverproxy::CommandR(){
 	std::string nameobject1,nameobject2,newname;
 	char tamanio;
 	std::memset(bufferanswer, 0, MAXSIZE);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject1 = std::string(bufferanswer);
 	std::memset(bufferanswer, 0, tamanio);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject2 = std::string(bufferanswer);
 	std::memset(bufferanswer, 0, tamanio);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	newname = std::string(bufferanswer);
 	if (nameobject1 == "lobby"){
 		(*window)->ChangeNameObject(nameobject2,newname);
@@ -198,29 +197,29 @@ void Serverproxy::CommandS(){
 
 	std::memset(bufferanswer, 0, MAXSIZE);
 
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameobject = std::string(bufferanswer);
 	std::cout << "Nombre Objeto: "<<nameobject;
 	std::memset(bufferanswer, 0, tamanio);
 
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	nameslot = std::string(bufferanswer);
 	std::cout << " Nombre Slot: "<<nameslot;
 	std::memset(bufferanswer, 0, tamanio);
 
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	value = std::string(bufferanswer);
 	std::cout << " Value Slot: "<<value<< std::endl;
 	std::memset(bufferanswer, 0, tamanio);
 
-	socket.Receive(&mut, sizeof(char));
+	socket.recv(&mut, sizeof(char));
 
 	if (mut == 'P'){
-		socket.Receive(&tamanio, sizeof(char));
-		socket.Receive(bufferanswer, (size_t)tamanio);
+		socket.recv(&tamanio, sizeof(char));
+		socket.recv(bufferanswer, (size_t)tamanio);
 		parent = std::string(bufferanswer);
 	}else{
 		parent = "";
@@ -235,8 +234,8 @@ void Serverproxy::CommandX(){
 	char tamanio;
 
 	std::memset(bufferanswer, 0, MAXSIZE);
-	socket.Receive(&tamanio, sizeof(char));
-	socket.Receive(bufferanswer, (size_t)tamanio);
+	socket.recv(&tamanio, sizeof(char));
+	socket.recv(bufferanswer, (size_t)tamanio);
 	error = std::string(bufferanswer);
 	(*window)->ErrorMessage(error);	
 }

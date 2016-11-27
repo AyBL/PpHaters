@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "clientsocket.h"
+#include "common_Socket.h"
 #include "clientThread.h"
 #include "clientmenuwindow.h"
 #include <gtkmm/application.h>

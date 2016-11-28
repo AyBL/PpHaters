@@ -95,13 +95,20 @@ Json::Value ObjectMasCapo::toJson(){}
 //}
 
 void ObjectMasCapo::notTemp(){
+
+	std::cout << "Se cambia: " << this << " con nombre: " << this->getName() << " a NO temporal" << std::endl;
+
 	this->temporal = false;
 }
 
 void ObjectMasCapo::yesTemp(){
+
+	std::cout << "Se cambia: " << this << " con nombre: " << this->getName() << " a temporal" << std::endl;
+
 	this->temporal = true;
 }
 
 bool ObjectMasCapo::isTemp() const{
 	return this->temporal;
 }
+

@@ -314,7 +314,7 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 
 	//Todos los metodos de expressionCp leen un caracter despues de cuando
 	//terminan lo que buscan, entonces ya tengo en c ese caracter
-	while (pudoParsear && (c != '.')){
+	while (pudoParsear && (c != '.') && (c != ')')){
 		std::string capitalKeyword;
 		pudoParsear = this->getCapKeyword(capitalKeyword);
 
@@ -330,7 +330,7 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 		if (!pudoParsear){
 			return false;
 		}
-		argList[capitalKeyword] = arg;
+		argList[capitalKeyword] = arg1;
 		messageName += capitalKeyword;
 		messageName += ':';
 	}
@@ -338,6 +338,9 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 	std::cout << "MESSAGE NAME: " << messageName << std::endl;
 
 	obj = VM.message(receiver, messageName, argList);
+
+	std::cout << "Obj resultado de message en kwMessage: " << obj << std::endl;
+
 	if (obj == NULL){
 		_receiver = receiverAux;
 		pos = posAux;
@@ -405,10 +408,16 @@ bool Parser::binaryMessage(ObjectMasCapo* &obj, const int &pos){
 		std::cout << "Por cambiar el slot: " << receiver << std::endl;
 
 		bool pudoAsignar = VM.assignmentMessage(receiver->getName(), arg);
-		if (pudoAsignar)
-			VM.appendObject(arg);
+		//Ya se appendea cuando se crea
+//		if (pudoAsignar)
+//			VM.appendObject(arg);
 		//Si fallo asignacion, devolver null?
-		obj = NULL;
+		if (!pudoAsignar){
+			obj = NULL;
+			return false;
+		}else
+			obj = arg;
+		//Ver si se devuelve biein el arg
 	}else{
 		argList[op] = arg;
 		obj = VM.message(receiver, op, argList);

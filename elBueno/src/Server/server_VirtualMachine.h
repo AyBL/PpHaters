@@ -51,6 +51,7 @@ public:
 	NumberObject* createObject(std::string name, double value);
 	BoolObject* createObject(std::string name, bool value);
 	void appendObject(ObjectMasCapo* obj);
+	void appendSlots(ObjectMasCapo *obj);
 	ObjectMasCapo* cloneObject(ObjectMasCapo* obj,
 			std::map<std::string, ObjectMasCapo*> arguments);
 

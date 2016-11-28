@@ -23,15 +23,18 @@ private:
 public:
 	CustomObject(std::string name = "customObject");
 	virtual ~CustomObject();
+	void tempEverySlot();
 	std::string getElementInIndexAt(size_t pos);
 	std::vector<std::string> getIndex();
 	std::string getValue();
 	ObjectMasCapo* addSlot(std::string slotName,ObjectMasCapo* newSlot,char flag);
 	ObjectMasCapo* addSlot(std::map<std::string, ObjectMasCapo*> arguments);
-	void removeSlot(ObjectMasCapo* newSlot);
+	ObjectMasCapo* removeSlot(std::map<std::string, ObjectMasCapo*> arguments);
 	void removeSlot(const std::string &slotName);
 	bool changeSlot(const std::string &slotName,
 			ObjectMasCapo* newSlot);
+	bool renameSlot(const std::string &oldName,
+			const std::string &newName);
 	ObjectMasCapo* print(std::map<std::string, ObjectMasCapo*> arguments);
 	ObjectMasCapo* clone(std::map<std::string, ObjectMasCapo*> arguments);
 

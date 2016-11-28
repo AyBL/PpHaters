@@ -6,10 +6,10 @@ CustomObject::CustomObject(std::string name) :
 	methods["print"] = &CustomObject::print;
 	methods["clone"] = &CustomObject::clone;
 	methods["_addSlot:"] = &CustomObject::addSlot;
+	methods["_RemoveSlots:"] = &CustomObject::removeSlot;
 }
 
 CustomObject::~CustomObject() {
-
 
 	std::cout << "Entra a destructor Custom de puntero: " << this << std::endl;
 
@@ -18,20 +18,35 @@ CustomObject::~CustomObject() {
 
 		std::cout << "Entra a que: " << this->getName() << " no es parent" << std::endl;
 
-		for(auto const &it : slots){
-			if (it.second != NULL){
-				delete it.second;
-			}
-		}
-//		for (unsigned i = 0; i < slots.size(); ++i) {
-//			if (slots[i]!= NULL) {
-//				delete slots[i];
+//		for(auto const &it : slots){
+//			if (it.second != NULL){
+////				delete it.second;
+//				it.second->yesTemp();
 //			}
 //		}
+		this->tempEverySlot();
 	}else{
+
+		std::cout << "Entra a que: " << this->getName() << " ES parent" << std::endl;
+
 		//Si es padre solo tiene un slot
 		this->slots.begin()->second = NULL;
 //		this->slots[0] = NULL;
+	}
+}
+
+void CustomObject::tempEverySlot(){
+	for(auto &it : slots){
+		if (it.second != NULL){
+
+			std::cout << "Entra al slot: " << it.second->getName() << std::endl;
+
+			if ((it.second->getIndex().size() != 0) && (it.second->getFlag() != 'P'))
+				static_cast<CustomObject*>(it.second)->tempEverySlot();
+
+			it.second->yesTemp();
+			it.second = NULL;
+		}
 	}
 }
 
@@ -63,6 +78,7 @@ ObjectMasCapo* CustomObject::addSlot(std::string slotName, ObjectMasCapo* newSlo
 //	std::cout<<"se agrego slot "<<slotName<<std::endl;
 	if (nameRepeats(slotName)) {
 		std::cout << "ERROR nombre repetido " << std::endl;
+		return NULL;
 	}
 	if (flag == 'P') {
 
@@ -127,9 +143,21 @@ ObjectMasCapo* CustomObject::addSlot(
 //	return slots[slots.size() - 1];
 }
 
-void CustomObject::removeSlot(ObjectMasCapo* newSlot) {
+ObjectMasCapo* CustomObject::removeSlot(std::map<std::string, ObjectMasCapo*> arguments) {
+	std::map<std::string, ObjectMasCapo*>::iterator it = arguments.begin();
 
+	CustomObject *other = static_cast<CustomObject*>(it->second);
+	for(auto &it : other->slots){
+		this->removeSlot(it.second->getName());
+
+		//Ver si necesario
+//		it.second->yesTemp();
+//		it.second = NULL;
+	}
+	//Cambiar
+	return this;
 }
+
 void CustomObject::removeSlot(const std::string &slotName) {
 	//VER SI FUNCIONA
 //	delete this->slots.at(slotName);
@@ -168,12 +196,17 @@ void CustomObject::removeSlot(const std::string &slotName) {
 }
 
 bool CustomObject::changeSlot(const std::string &slotName, ObjectMasCapo* newSlot){
-
+	//VALIDAR QUE EXISTA EL SLOT
+	if (!nameRepeats(slotName)) {
+		std::cout << "ERROR slot no existente " << std::endl;
+		return false;
+	}
 	std::cout << "Entra a changeSlot a cambiar: " << slotName << std::endl;
 
 	CustomObject *container;
 	ObjectMasCapo *slotToChange = this->lookup(slotName, container);
 
+	std::cout << "SlotToChange: " << slotToChange->getName() << std::endl;
 	std::cout << "Container: " << container->getName() << std::endl;
 
 	if ((slotToChange->getFlag() != 'I') && (slotToChange->getFlag() != 'P')){
@@ -196,6 +229,24 @@ bool CustomObject::changeSlot(const std::string &slotName, ObjectMasCapo* newSlo
 		//Excepcion?
 		return false;
 	}
+}
+
+bool CustomObject::renameSlot(const std::string &oldName, const std::string &newName){
+	if (slots.find(newName) != slots.end()){
+		return false;
+	}//Asumo que ya se chequeo que exista el slot al que se le va a cambiar el nombre
+	slots[newName] = slots.at(oldName);
+	slots.at(oldName)->rename(newName);
+	slots.erase(oldName);
+	std::vector<std::string>::iterator it;
+		it = index.begin();
+		std::string s = (*it);
+		while (s != oldName && it != index.end()) {
+			++it;
+			s =(*it);
+		}
+		*it = newName;
+	return true;
 }
 
 ObjectMasCapo* CustomObject::clone(
@@ -250,6 +301,9 @@ ObjectMasCapo* CustomObject::lookup(const std::string &slotName, CustomObject* &
 	std::vector<CustomObject*> parent;
 	if (slots.find(slotName) != slots.end()){
 		container = this;
+
+		std::cout << "En lookup encuentra: " << slots.at(slotName) << " para " << slotName << std::endl;
+
 		return slots.at(slotName);
 	}else{
 		for(auto const &it : slots){

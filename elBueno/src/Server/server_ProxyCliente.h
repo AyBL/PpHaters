@@ -41,8 +41,8 @@ public:
 	void sendCommandO(std::string name, uint32_t posX, uint32_t posY);
 
 //	void commandO(std::string &name, uint32_t &posX,uint32_t &posY);
-	void commandA(std::string &objectName, std::string &stringToParse);
-	void sendCommandA(std::string ObjectName, std::string SlotName,
+	char commandS(std::string &objectName, std::string &stringToParse);
+	void sendCommandS(std::string ObjectName, std::string SlotName,
 			std::string value, char flag, std::string slotParent);
 
 	void commandP(std::string &objectToMove, uint32_t &newPosX,

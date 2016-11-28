@@ -21,7 +21,7 @@ private:
 	//metodos para cada comando
 //	void commandL();
 	void commandO();
-	void commandA();
+	void commandS();
 	void commandP();
 	void commandM();
 	void commandC();

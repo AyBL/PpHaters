@@ -30,23 +30,44 @@ VirtualMachine::~VirtualMachine() {
 
 	std::cout << "Objects Created size: " << objectsCreated.size() << std::endl;
 
-	for (unsigned i = 1; i < objectsCreated.size(); ++i) {
+	for (unsigned i = 0; i < objectsCreated.size(); ++i) {
+		if (objectsCreated[i]!= NULL){
 
-		std::cout<<"Entra a for en destr de VM, al obj: "<< objectsCreated[i]<<std::endl;
-		std::cout<<"Entra a for en destr de VM, al obj con nombre: "<< objectsCreated[i]->getName()<<std::endl;
+			std::cout<<"Entra a for en destr de VM, al obj: "<< objectsCreated[i]<<std::endl;
+			std::cout<<"Entra a for en destr de VM, al obj con nombre: "<< objectsCreated[i]->getName()<<std::endl;
 
-		if ((objectsCreated[i]!= NULL) && (objectsCreated[i]->isTemp())) {
+			if ((objectsCreated[i]!= NULL) && (objectsCreated[i]->isTemp())) {
 
-			std::cout<<"Entra a objectsCreated, al obj: "<< objectsCreated[i]->getName()<<std::endl;
-			std::cout << "En iteracion: " << i << std::endl;
+				std::cout<<"Entra a objectsCreated, al obj: "<< objectsCreated[i]->getName()<<std::endl;
+				std::cout << "En iteracion: " << i << std::endl;
 
-			delete objectsCreated[i];
+				delete objectsCreated[i];
+				objectsCreated[i] = NULL;
+			}
+		}
+	}
+
+	std::cout << "-------------Entra a segunda pasada de destruccion" << std::endl;
+
+	for (unsigned i = 0; i < objectsCreated.size(); ++i) {
+		if (objectsCreated[i]!= NULL){
+
+			std::cout<<"Entra a for en destr de VM, al obj: "<< objectsCreated[i]<<std::endl;
+			std::cout<<"Entra a for en destr de VM, al obj con nombre: "<< objectsCreated[i]->getName()<<std::endl;
+
+			if ((objectsCreated[i]!= NULL) && (objectsCreated[i]->isTemp())) {
+
+				std::cout<<"Entra a objectsCreated, al obj: "<< objectsCreated[i]->getName()<<std::endl;
+				std::cout << "En iteracion: " << i << std::endl;
+
+				delete objectsCreated[i];
+			}
 		}
 	}
 //	std::cout << "se destruyo Obj" << std::endl;
-	if (lobby != NULL) {
-		delete lobby; // si lo paso a stack no es necesario
-	}
+//	if (lobby != NULL) {
+//		delete lobby; // si lo paso a stack no es necesario
+//	}
 }
 
 VirtualMachine::VirtualMachine(VirtualMachine&& other) {
@@ -126,7 +147,22 @@ BoolObject* VirtualMachine::createObject(std::string name, bool value) {
 }
 
 void VirtualMachine::appendObject(ObjectMasCapo* obj){
+	std::cout << "Se AGREGA a objectsCreated obj con nombre: " << obj->getName() << std::endl;
+	std::cout << "Se AGREGA a objectsCreated: " << obj << std::endl;
 	objectsCreated.push_back(obj);
+}
+
+void VirtualMachine::appendSlots(ObjectMasCapo *obj){
+	std::vector<std::string> objIndex = obj->getIndex();
+
+	std::cout << "ClonedIndex size: " << objIndex.size() << std::endl;
+
+	if (objIndex.size() != 0){
+		for (int i = 0; i < objIndex.size(); ++i){
+			this->appendSlots(obj->lookup(objIndex[i]));
+		}
+	}
+	this->appendObject(obj);
 }
 
 ObjectMasCapo* VirtualMachine::cloneObject(ObjectMasCapo* obj,
@@ -137,17 +173,18 @@ ObjectMasCapo* VirtualMachine::cloneObject(ObjectMasCapo* obj,
 
 	std::cout << "Objects created size ANTES de appendear clonados: " << objectsCreated.size() << std::endl;
 
-	std::vector<std::string> clonedIndex = cloned->getIndex();
-
-	std::cout << "ClonedIndex size: " << clonedIndex.size() << std::endl;
-
-	if (clonedIndex.size() != 0){
-		for (int i = 0; i < clonedIndex.size(); ++i){
-			//Deberia appendear los slots de los slots
-			this->appendObject(cloned->lookup(clonedIndex[i]));
-		}
-	}
-	this->appendObject(cloned);
+//	std::vector<std::string> clonedIndex = cloned->getIndex();
+//
+//	std::cout << "ClonedIndex size: " << clonedIndex.size() << std::endl;
+//
+//	if (clonedIndex.size() != 0){
+//		for (int i = 0; i < clonedIndex.size(); ++i){
+//			//Deberia appendear los slots de los slots
+//			this->appendObject(cloned->lookup(clonedIndex[i]));
+//		}
+//	}
+//	this->appendObject(cloned);
+	this->appendSlots(cloned);
 
 	std::cout << "Objects created size DESPUES de appendear clonados: " << objectsCreated.size() << std::endl;
 
@@ -182,13 +219,19 @@ void VirtualMachine::changeArgs(bool toNil, CustomObject* &msgObj,
 		msgName.erase(0, pos + 1);
 		if (!toNil){
 			arg = argument.at(argName);
+
+			std::cout << "Cant de args: " << argument.size() << std::endl;
 			std::cout << "Arg sacado del map de argumentos: " << arg << std::endl;
+
 		}else{
 //			arg = new NilObject("");
 //			this->appendObject(arg);
 			arg = this->createNilObject("");
 		}
 		msgObj->changeSlot(msgObj->getElementInIndexAt(i), arg);
+
+		std::cout << "Se cambio el slot arg: " << msgObj->getElementInIndexAt(i) << std::endl;
+
 		++i;
 	}
 }
@@ -242,11 +285,6 @@ ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 			context = lobby;
 			return obj; // ????
 		} else {
-//			return NULL;  //ERROR el metodo no es ejecutable
-			// mm maybe para el cli, si no es ejec devolver el valor
-			// no se si como nuevo objeto o que aun VER
-			//return receiver;
-			//Sofi cambia receiver por aux
 			return aux;
 		}
 	} else {

@@ -133,13 +133,15 @@ void ProxyCliente::sendPosition(uint32_t posX, uint32_t posY) {
 	skt.send(buffer, sizeof(uint32_t) * 2);
 }
 
-void ProxyCliente::commandA(std::string &objectName,
-		std::string &stringToParse) { //????? jajajaj el nombre
+char ProxyCliente::commandS(std::string &objectName,
+		std::string &stringToParse) {
+	char type = recvMessage();
 	objectName = getName();
 	stringToParse = getName();
+	return type;
 }
 
-void ProxyCliente::sendCommandA(std::string objectName, std::string slotName,
+void ProxyCliente::sendCommandS(std::string objectName, std::string slotName,
 		std::string value, char flag, std::string slotParent) {
 	//faltan todos los chequeos de errores
 	std::cout << "ProxyCliente: sendCommandA " << objectName << " " << slotName

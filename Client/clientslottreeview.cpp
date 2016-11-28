@@ -138,9 +138,9 @@ void SlotTreeView::on_menu_file_popup_accept(){
                     proxy.Send(sendbuffer,strlen(sendbuffer));
                     std::memset(sendbuffer, 0, namebuffer.size());
                 }
-            } else {
-                (*iter)[m_Columns.m_col_name] = nameant;
-            }
+            } 
+            (*iter)[m_Columns.m_col_name] = nameant;
+            
 
             if (mut && (value != valueant)){
                 valuebuffer = name + ": " + value + ".";
@@ -150,9 +150,8 @@ void SlotTreeView::on_menu_file_popup_accept(){
 
                 memcpy(sendbuffer, valuebuffer.c_str(), valuebuffer.size() );
                 proxy.Send(sendbuffer,strlen(sendbuffer));
-            } else {
-                (*iter)[m_Columns.m_col_value] = valueant;
             }
+            (*iter)[m_Columns.m_col_value] = valueant;
         }
     }
 }

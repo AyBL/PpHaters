@@ -194,13 +194,10 @@ void SelfObject::on_checkbox_editable_toggled(){
 
             memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-            proxy.Send(sendbuffer,strlen(sendbuffer));    
+            proxy.Send(sendbuffer,strlen(sendbuffer));   
         }    
-    } else {
-        m_Entry.set_text(name);
-    }
-
-    
+    } 
+    m_Entry.set_text(name);      
 }
 
 //Decorator
@@ -242,7 +239,7 @@ void SelfObject::GetPosition(int &posx, int &posy){
 
 void SelfObject::ChangeName(std::string newname){
     name = newname;
-    m_Label.set_label(newname);
+    m_Entry.set_text(newname);
 }
 
 void SelfObject::ChangeNameSlot(std::string nameslot,std::string newname){

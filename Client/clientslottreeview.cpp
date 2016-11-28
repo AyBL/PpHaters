@@ -146,7 +146,7 @@ void SlotTreeView::on_menu_file_popup_accept(){
                 valuebuffer = name + ": " + value + ".";
                 valuebuffer = std::string(1,valuebuffer.size()) + valuebuffer;
                 valuebuffer = nameselfobject+valuebuffer;
-                valuebuffer = "S" + std::string(1,type) + std::string(1,nameselfobject.size());
+                valuebuffer = "S" + std::string(1,type) + std::string(1,nameselfobject.size()) + valuebuffer;
 
                 memcpy(sendbuffer, valuebuffer.c_str(), valuebuffer.size() );
                 proxy.Send(sendbuffer,strlen(sendbuffer));

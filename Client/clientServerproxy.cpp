@@ -29,6 +29,9 @@ int Serverproxy::ReceiveAnswer(){
 	if (s>0){
 		std::cout << "Comando: "<<command << std::endl;
 	    switch (command) {
+	    	case 'D':
+				CommandE();
+				break;
 			case 'E':
 				CommandE();
 				break;
@@ -80,6 +83,20 @@ void Serverproxy::Stop(){
 		socket.shutdown();
 	}
 }
+
+// void Serverproxy::CommandD(){
+// 	unsigned char i, ucantidad;
+// 	char cantidad, tamanio;
+
+// 	socket.recv(&cantidad, sizeof(char));
+// 	ucantidad = (unsigned char) cantidad;
+// 	for (i = 0; i < ucantidad; i++){
+// 		socket.recv(&tamanio, sizeof(char));
+// 		std::memset(bufferanswer, 0, MAXSIZE);
+// 		socket.recv(bufferanswer, (size_t)tamanio);
+// 		(*window)->AddLobbies(std::make_tuple(i,bufferanswer));
+// 	}	
+// }
 
 void Serverproxy::CommandE(){
 	std::string nameobject1,nameobject2;

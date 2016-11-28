@@ -42,6 +42,7 @@ class Serverproxy: public Thread{
 
         bool must_be_run;
 
+        //void CommandD();
         void CommandE();
         void CommandL();
         void CommandM();

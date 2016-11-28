@@ -191,9 +191,11 @@ void ProxyCliente::sendCommandM(std::string objectName, std::string SlotName,
 	sendPosition(posX, posY);
 }
 
-void ProxyCliente::commandE(std::string &ObjectName, std::string &slotName) {
+char ProxyCliente::commandE(std::string &ObjectName, std::string &slotName) {
+	char type = recvMessage();
 	ObjectName = getName();
 	slotName = getName();
+	return type;
 }
 
 void ProxyCliente::sendCommandE(const std::string ObjectName,

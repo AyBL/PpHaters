@@ -9,15 +9,24 @@
 void VirtualMachine::connectNewClient(ProxyCliente *newClient) {
 //	std::cout<<"se agregara "<<connectedClients.size()<<std::endl;
 	connectedClients.push_back(newClient);
-	std::cout<<"se agrego proxy n:  "<<connectedClients.size()<<std::endl;
+	std::cout << "se agrego proxy n:  " << connectedClients.size() << std::endl;
 }
-ProxyCliente* VirtualMachine::getClient(unsigned indexClient) const{
-	if (indexClient >= connectedClients.size()) return NULL;
+ProxyCliente* VirtualMachine::getClient(unsigned indexClient) const {
+	if (indexClient >= connectedClients.size())
+		return NULL;
 	return connectedClients[indexClient];
 }
 
-unsigned VirtualMachine::numberOfUsers() const{
+unsigned VirtualMachine::numberOfUsers() const {
 	return connectedClients.size();
+}
+
+void VirtualMachine::lock() {
+	vmMutex.lock();
+}
+
+void VirtualMachine::unlock() {
+	vmMutex.unlock();
 }
 
 VirtualMachine::VirtualMachine(std::string name) :
@@ -31,14 +40,17 @@ VirtualMachine::~VirtualMachine() {
 	std::cout << "Objects Created size: " << objectsCreated.size() << std::endl;
 
 	for (unsigned i = 0; i < objectsCreated.size(); ++i) {
-		if (objectsCreated[i]!= NULL){
+		if (objectsCreated[i] != NULL) {
 
-			std::cout<<"Entra a for en destr de VM, al obj: "<< objectsCreated[i]<<std::endl;
-			std::cout<<"Entra a for en destr de VM, al obj con nombre: "<< objectsCreated[i]->getName()<<std::endl;
+			std::cout << "Entra a for en destr de VM, al obj: "
+					<< objectsCreated[i] << std::endl;
+			std::cout << "Entra a for en destr de VM, al obj con nombre: "
+					<< objectsCreated[i]->getName() << std::endl;
 
-			if ((objectsCreated[i]!= NULL) && (objectsCreated[i]->isTemp())) {
+			if ((objectsCreated[i] != NULL) && (objectsCreated[i]->isTemp())) {
 
-				std::cout<<"Entra a objectsCreated, al obj: "<< objectsCreated[i]->getName()<<std::endl;
+				std::cout << "Entra a objectsCreated, al obj: "
+						<< objectsCreated[i]->getName() << std::endl;
 				std::cout << "En iteracion: " << i << std::endl;
 
 				delete objectsCreated[i];
@@ -47,17 +59,21 @@ VirtualMachine::~VirtualMachine() {
 		}
 	}
 
-	std::cout << "-------------Entra a segunda pasada de destruccion" << std::endl;
+	std::cout << "-------------Entra a segunda pasada de destruccion"
+			<< std::endl;
 
 	for (unsigned i = 0; i < objectsCreated.size(); ++i) {
-		if (objectsCreated[i]!= NULL){
+		if (objectsCreated[i] != NULL) {
 
-			std::cout<<"Entra a for en destr de VM, al obj: "<< objectsCreated[i]<<std::endl;
-			std::cout<<"Entra a for en destr de VM, al obj con nombre: "<< objectsCreated[i]->getName()<<std::endl;
+			std::cout << "Entra a for en destr de VM, al obj: "
+					<< objectsCreated[i] << std::endl;
+			std::cout << "Entra a for en destr de VM, al obj con nombre: "
+					<< objectsCreated[i]->getName() << std::endl;
 
-			if ((objectsCreated[i]!= NULL) && (objectsCreated[i]->isTemp())) {
+			if ((objectsCreated[i] != NULL) && (objectsCreated[i]->isTemp())) {
 
-				std::cout<<"Entra a objectsCreated, al obj: "<< objectsCreated[i]->getName()<<std::endl;
+				std::cout << "Entra a objectsCreated, al obj: "
+						<< objectsCreated[i]->getName() << std::endl;
 				std::cout << "En iteracion: " << i << std::endl;
 
 				delete objectsCreated[i];
@@ -89,7 +105,6 @@ VirtualMachine& VirtualMachine::operator=(VirtualMachine&& other) {
 	return *this;
 }
 
-
 void VirtualMachine::collect() {
 //	for (unsigned i = 0; i < objectsCreated.size(); ++i) {
 //		if (objectsCreated[i] != NULL && objectsCreated[i]->isTemp()) {
@@ -102,7 +117,7 @@ std::string VirtualMachine::getName() {
 	return name;
 }
 
-CustomObject* VirtualMachine::getLobby() const{
+CustomObject* VirtualMachine::getLobby() const {
 	return this->lobby;
 }
 
@@ -118,7 +133,7 @@ CustomObject* VirtualMachine::createObject(std::string name) {
 	return newObject;
 }
 
-NilObject* VirtualMachine::createNilObject(const std::string &name){
+NilObject* VirtualMachine::createNilObject(const std::string &name) {
 	NilObject* newObject = new NilObject(name);
 	objectsCreated.push_back(newObject);
 	return newObject;
@@ -146,19 +161,20 @@ BoolObject* VirtualMachine::createObject(std::string name, bool value) {
 	return newObject;
 }
 
-void VirtualMachine::appendObject(ObjectMasCapo* obj){
-	std::cout << "Se AGREGA a objectsCreated obj con nombre: " << obj->getName() << std::endl;
+void VirtualMachine::appendObject(ObjectMasCapo* obj) {
+	std::cout << "Se AGREGA a objectsCreated obj con nombre: " << obj->getName()
+			<< std::endl;
 	std::cout << "Se AGREGA a objectsCreated: " << obj << std::endl;
 	objectsCreated.push_back(obj);
 }
 
-void VirtualMachine::appendSlots(ObjectMasCapo *obj){
+void VirtualMachine::appendSlots(ObjectMasCapo *obj) {
 	std::vector<std::string> objIndex = obj->getIndex();
 
 	std::cout << "ClonedIndex size: " << objIndex.size() << std::endl;
 
-	if (objIndex.size() != 0){
-		for (int i = 0; i < objIndex.size(); ++i){
+	if (objIndex.size() != 0) {
+		for (int i = 0; i < objIndex.size(); ++i) {
 			this->appendSlots(obj->lookup(objIndex[i]));
 		}
 	}
@@ -166,12 +182,13 @@ void VirtualMachine::appendSlots(ObjectMasCapo *obj){
 }
 
 ObjectMasCapo* VirtualMachine::cloneObject(ObjectMasCapo* obj,
-		std::map<std::string, ObjectMasCapo*> arguments){
+		std::map<std::string, ObjectMasCapo*> arguments) {
 	ObjectMasCapo* cloned = obj->clone(arguments);
 	//Primero se appendean los slots y luego el objeto contenedor para no
 	//liberar dos veces
 
-	std::cout << "Objects created size ANTES de appendear clonados: " << objectsCreated.size() << std::endl;
+	std::cout << "Objects created size ANTES de appendear clonados: "
+			<< objectsCreated.size() << std::endl;
 
 //	std::vector<std::string> clonedIndex = cloned->getIndex();
 //
@@ -186,7 +203,8 @@ ObjectMasCapo* VirtualMachine::cloneObject(ObjectMasCapo* obj,
 //	this->appendObject(cloned);
 	this->appendSlots(cloned);
 
-	std::cout << "Objects created size DESPUES de appendear clonados: " << objectsCreated.size() << std::endl;
+	std::cout << "Objects created size DESPUES de appendear clonados: "
+			<< objectsCreated.size() << std::endl;
 
 	return cloned;
 }
@@ -194,7 +212,7 @@ ObjectMasCapo* VirtualMachine::cloneObject(ObjectMasCapo* obj,
 //-----------------------------------------------------------
 
 ObjectMasCapo* VirtualMachine::lookup(std::string slotName) {
-	std::cout<<"Virtual machine lookup buscando: "<<slotName<<std::endl;
+	std::cout << "Virtual machine lookup buscando: " << slotName << std::endl;
 	// tengo que evaluar el context
 	if ((context->getName() == slotName) || (slotName == "self")) {
 		return context;
@@ -210,40 +228,42 @@ void VirtualMachine::changeArgs(bool toNil, CustomObject* &msgObj,
 	ObjectMasCapo* arg;
 	int i = 0;
 	//Primero spliteo el string para obtener el orden de los argumentos
-	while ((pos = msgName.find(DELIMITER)) != std::string::npos){
+	while ((pos = msgName.find(DELIMITER)) != std::string::npos) {
 		argName = msgName.substr(0, pos);
 
 		std::cout << "Arg salido del split del nombre: " << argName
 				<< std::endl;
 
 		msgName.erase(0, pos + 1);
-		if (!toNil){
+		if (!toNil) {
 			arg = argument.at(argName);
 
 			std::cout << "Cant de args: " << argument.size() << std::endl;
-			std::cout << "Arg sacado del map de argumentos: " << arg << std::endl;
+			std::cout << "Arg sacado del map de argumentos: " << arg
+					<< std::endl;
 
-		}else{
+		} else {
 //			arg = new NilObject("");
 //			this->appendObject(arg);
 			arg = this->createNilObject("");
 		}
 		msgObj->changeSlot(msgObj->getElementInIndexAt(i), arg);
 
-		std::cout << "Se cambio el slot arg: " << msgObj->getElementInIndexAt(i) << std::endl;
+		std::cout << "Se cambio el slot arg: " << msgObj->getElementInIndexAt(i)
+				<< std::endl;
 
 		++i;
 	}
 }
 
 bool VirtualMachine::assignmentMessage(const std::string &slotName,
-		ObjectMasCapo *newSlot){
+		ObjectMasCapo *newSlot) {
 	return this->context->changeSlot(slotName, newSlot);
 }
 
 ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 		std::string method, std::map<std::string, ObjectMasCapo*> argument) {
-	if (receiver == NULL){
+	if (receiver == NULL) {
 		std::cout << "Receiver es null" << std::endl;
 
 		receiver = this->context;
@@ -260,15 +280,17 @@ ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 		if (aux->getCode() != "") {
 			//Un objeto que tenga un slot metodo con codigo es un CustomObject
 			CustomObject *auxCustom = static_cast<CustomObject*>(aux);
-			if (!argument.empty()){
+			if (!argument.empty()) {
 				//Este metodo deberia aplicarse para cualquier obj q tenga slots args
 				this->changeArgs(false, auxCustom, method, argument);
 			}
 
-			ObjectMasCapo* receiverAsParent = this->cloneObject(receiver, argument);
+			ObjectMasCapo* receiverAsParent = this->cloneObject(receiver,
+					argument);
 
 			//Seteo el receiver como padre del objeto mensaje
-			ObjectMasCapo *addedObj = auxCustom->addSlot("self", receiverAsParent, 'P');
+			ObjectMasCapo *addedObj = auxCustom->addSlot("self",
+					receiverAsParent, 'P');
 			this->appendObject(addedObj);
 //			context = static_cast<CustomObject*>(receiver);
 			context = auxCustom;
@@ -279,7 +301,7 @@ ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 
 			auxCustom->removeSlot("self");
 
-			if (!argument.empty()){
+			if (!argument.empty()) {
 				this->changeArgs(true, auxCustom, method, argument);
 			}
 			context = lobby;
@@ -289,11 +311,11 @@ ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 		}
 	} else {
 //		std::cout<<"no encontrado "<<std::endl;
-		if (method == "clone"){
+		if (method == "clone") {
 			receiver = this->cloneObject(receiver, argument);
-		}else if (method == "self"){
+		} else if (method == "self") {
 			return receiver;
-		}else{
+		} else {
 			receiver = receiver->execute(method, argument);
 		}
 		return receiver;
@@ -301,7 +323,7 @@ ObjectMasCapo* VirtualMachine::message(ObjectMasCapo* receiver,
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Json::Value VirtualMachine::toJson(){
+Json::Value VirtualMachine::toJson() {
 	Json::Value value(Json::objectValue);
 	value["name"] = this->name;
 	value["lobby"] = this->lobby->toJson();
@@ -311,7 +333,7 @@ Json::Value VirtualMachine::toJson(){
 	return value;
 }
 
-void VirtualMachine::JsonSave(const std::string &nombreArch){
+void VirtualMachine::JsonSave(const std::string &nombreArch) {
 	std::ofstream out(nombreArch, std::ofstream::out);
 	Json::Value obj_json(Json::objectValue), contacts_json(Json::arrayValue);
 
@@ -322,21 +344,23 @@ void VirtualMachine::JsonSave(const std::string &nombreArch){
 	out.close();
 }
 
-CustomObject* VirtualMachine::fromJsonToCustom(CustomObject* &obj, Json::Value customObjJson){
+CustomObject* VirtualMachine::fromJsonToCustom(CustomObject* &obj,
+		Json::Value customObjJson) {
 	Json::Value slots_json;
 
 	obj->addCode(customObjJson["code"].asString());
 	obj->setFlags(customObjJson["slotType"].asString()[0]);
 	slots_json = customObjJson["slots"];
 
-	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end(); ++it){
+	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end();
+			++it) {
 		obj->addSlot((*it)["name"].asString(), this->fromJson(*it),
 				(*it)["slotType"].asString()[0]);
 	}
 	return obj;
 }
 
-CustomObject* VirtualMachine::fromJsonToCustom(Json::Value customObjJson){
+CustomObject* VirtualMachine::fromJsonToCustom(Json::Value customObjJson) {
 	Json::Value slots_json;
 	char tipoSlot;
 
@@ -344,15 +368,17 @@ CustomObject* VirtualMachine::fromJsonToCustom(Json::Value customObjJson){
 
 	obj->addCode(customObjJson["code"].asString());
 	obj->setFlags(customObjJson["slotType"].asString()[0]);
-	obj->setPosition(customObjJson["pos x"].asInt(), customObjJson["pos y"].asInt());
+	obj->setPosition(customObjJson["pos x"].asInt(),
+			customObjJson["pos y"].asInt());
 	slots_json = customObjJson["slots"];
 
-	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end(); ++it){
+	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end();
+			++it) {
 		tipoSlot = (*it)["slotType"].asString()[0];
 		if (tipoSlot != 'P')
 			obj->addSlot((*it)["name"].asString(), this->fromJson(*it),
 					tipoSlot);
-		else{
+		else {
 			obj->addSlot((*it)["name"].asString(), this->fromJsonToPadre(*it),
 					tipoSlot);
 		}
@@ -360,21 +386,21 @@ CustomObject* VirtualMachine::fromJsonToCustom(Json::Value customObjJson){
 	return obj;
 }
 
-ObjectMasCapo* VirtualMachine::fromJsonToNumber(Json::Value objJson){
+ObjectMasCapo* VirtualMachine::fromJsonToNumber(Json::Value objJson) {
 	NumberObject *obj = this->createObject(objJson["name"].asString(),
 			objJson["value"].asDouble());
 	obj->setFlags(objJson["slotType"].asString()[0]);
 	return obj;
 }
 
-ObjectMasCapo* VirtualMachine::fromJsonToString(Json::Value objJson){
+ObjectMasCapo* VirtualMachine::fromJsonToString(Json::Value objJson) {
 	StringObject *obj = this->createObject(objJson["name"].asString(),
 			objJson["value"].asString());
 	obj->setFlags(objJson["slotType"].asString()[0]);
 	return obj;
 }
 
-ObjectMasCapo* VirtualMachine::fromJsonToBool(Json::Value objJson){
+ObjectMasCapo* VirtualMachine::fromJsonToBool(Json::Value objJson) {
 	BoolObject *obj = this->createObject(objJson["name"].asString(),
 			objJson["value"].asBool());
 	obj->setFlags(objJson["slotType"].asString()[0]);
@@ -383,19 +409,21 @@ ObjectMasCapo* VirtualMachine::fromJsonToBool(Json::Value objJson){
 
 //ESTE METODO ES PARA QUE CUANDO EL SLOT SEA PADRE, NO SE CREE UN NUEVO OBJ SI
 //NO QUE SE LE ASIGNE UN PUNTERO AL OBJ YA EXISTENTE
-ObjectMasCapo* VirtualMachine::fromJsonToPadre(Json::Value customObjJson){
+ObjectMasCapo* VirtualMachine::fromJsonToPadre(Json::Value customObjJson) {
 	Json::Value slots_json;
 	ObjectMasCapo *padre;
 	char tipoSlot;
 //	CustomObject *obj = this->createObject(customObjJson["name"].asString());
 
-	std::cout << "Deberia ser pepe: " << customObjJson["name"].asString() << std::endl;
+	std::cout << "Deberia ser pepe: " << customObjJson["name"].asString()
+			<< std::endl;
 
 //	obj->addCode(customObjJson["code"].asString());
 //	obj->setFlags(customObjJson["slotType"].asString()[0]);
 	slots_json = customObjJson["slots"];
 
-	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end(); ++it){
+	for (Json::Value::iterator it = slots_json.begin(); it != slots_json.end();
+			++it) {
 		//VER SI HAY QUE HACER LOOKUP POR EL CONTEXTO
 		padre = this->lobby->lookup((*it)["name"].asString());
 
@@ -408,7 +436,7 @@ ObjectMasCapo* VirtualMachine::fromJsonToPadre(Json::Value customObjJson){
 	return padre;
 }
 
-ObjectMasCapo* VirtualMachine::fromJson(Json::Value objJson){
+ObjectMasCapo* VirtualMachine::fromJson(Json::Value objJson) {
 	ObjectMasCapo *obj;
 	std::string str = objJson["type"].asString();
 	if (str == "Custom")

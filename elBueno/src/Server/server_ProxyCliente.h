@@ -54,7 +54,7 @@ public:
 	void sendCommandM(std::string ObjectName, std::string SlotName,
 			uint32_t posX, uint32_t posY);
 
-	void commandE(std::string &ObjectName, std::string &slotName);
+	char commandE(std::string &ObjectName, std::string &slotName);
 	void sendCommandE(const std::string ObjectName, std::string slotName);
 
 	void sendError(const std::string errorMessage);

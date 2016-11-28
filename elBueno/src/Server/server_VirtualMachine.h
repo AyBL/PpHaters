@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <mutex>
 
 #include "server_ObjectMasCapo.h"
 #include "server_NumberObject.h"
@@ -22,6 +23,7 @@ private:
 	CustomObject *context;
 	std::vector<ObjectMasCapo*> objectsCreated;
 	std::vector<ProxyCliente*> connectedClients;
+	std::mutex vmMutex;
 
 public:
 	VirtualMachine(std::string name = "lobby1");
@@ -32,17 +34,18 @@ public:
 	ProxyCliente* getClient(unsigned indexClient) const;
 	unsigned numberOfUsers() const;
 
+	void lock();
+	void unlock();
 
 	std::string getName(); // para seleccionar la salas despues
 
 	//---- message---//
 	ObjectMasCapo* lookup(std::string slotName);
-	void changeArgs(bool toNil, CustomObject* &msgObj,
-		std::string msgName, std::map<std::string, ObjectMasCapo*> &argument);
-	bool assignmentMessage(const std::string &slotName,
-			ObjectMasCapo *newSlot);
-	ObjectMasCapo* message(ObjectMasCapo* receiver,
-			std::string method, std::map<std::string, ObjectMasCapo*> argument);
+	void changeArgs(bool toNil, CustomObject* &msgObj, std::string msgName,
+			std::map<std::string, ObjectMasCapo*> &argument);
+	bool assignmentMessage(const std::string &slotName, ObjectMasCapo *newSlot);
+	ObjectMasCapo* message(ObjectMasCapo* receiver, std::string method,
+			std::map<std::string, ObjectMasCapo*> argument);
 	//---------------//
 
 	CustomObject* createObject(std::string name); // customObject
@@ -59,7 +62,7 @@ public:
 
 	VirtualMachine& operator=(const VirtualMachine&) = delete;
 
-	VirtualMachine(VirtualMachine&& other) ;
+	VirtualMachine(VirtualMachine&& other);
 
 	VirtualMachine& operator=(VirtualMachine&& other);
 

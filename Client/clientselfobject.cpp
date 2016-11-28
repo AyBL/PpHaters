@@ -184,6 +184,7 @@ void SelfObject::on_checkbox_editable_toggled(){
         if ((!edit) && ( newname != name)) {
             buffer = "R" + std::string(1,lobby.size()) + lobby;
             buffer = buffer + std::string(1,name.size()) + name;
+            buffer = buffer + std::string(1,newname.size()) + newname;
 
             std::memset(sendbuffer, 0, MAXSENDBUFFER);
 

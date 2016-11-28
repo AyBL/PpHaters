@@ -36,18 +36,27 @@ m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy
     show_all_children();
 }
 
-WindowObject::~WindowObject(){
-}
-
 void WindowObject::CloseAppWithoutHide(){
     std::map <std::string,SelfObject*>::iterator it;
     std::string name;
     for (it = selfobjects.begin(); it != selfobjects.end();++it){
         name = it->first;
-        selfobjects[name]->hide();
         delete(selfobjects[name]);
         selfobjects.erase(name);
     }   
+
+    std::map <std::string,ValueObject*>::iterator it2;
+
+    for (it2 = valueobjects.begin(); it2 != valueobjects.end();++it2){
+        name = it->first;
+        delete(valueobjects[name]);
+        valueobjects.erase(name);
+    }
+
+}
+
+WindowObject::~WindowObject(){
+    CloseAppWithoutHide();
 }
 
 bool WindowObject::on_button_press_event(GdkEventButton* button_event){
@@ -91,7 +100,6 @@ void WindowObject::on_menu_file_popup_create(){
 }
 
 void WindowObject::on_menu_file_popup_close(){
-    CloseAppWithoutHide();
     hide();
 }
 
@@ -178,7 +186,7 @@ void WindowObject::ChangeNameSlot(std::string nameobject,std::string nameslot,st
 }
 
 void WindowObject::CloseApp(){
-    CloseAppWithoutHide();    
+    hide();
 }
 
 bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
@@ -188,7 +196,6 @@ bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 bool WindowObject::on_delete_event(GdkEventAny* any_event){
-    CloseAppWithoutHide();
     return Gtk::Window::on_delete_event(any_event);    
 }
 

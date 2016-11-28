@@ -70,7 +70,7 @@ void Serverproxy::run(){
 		s = ReceiveAnswer();
 	}
 
-	if (s == -1)
+	if (must_be_run && (s == -1))
 		(*window)->CloseApp();	
 }
 

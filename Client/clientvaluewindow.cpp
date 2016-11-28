@@ -65,7 +65,7 @@ void ValueObject::set_idle_state(){
     char sendbuffer[200];
     std::string buffer;
     int xx,yy;
-
+    char type = '1';
     ismoving = false;
 
     win->get_pointer(xx,yy);
@@ -73,7 +73,7 @@ void ValueObject::set_idle_state(){
     xx = xx - dx;
     yy = yy - dy;
 
-    buffer = "P"+std::string(1,name.size())+name;
+    buffer = "P" + std::string(1,type) +std::string(1,name.size())+name;
 
     std::memset(sendbuffer, 0, 200);
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );

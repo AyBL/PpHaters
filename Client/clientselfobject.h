@@ -59,8 +59,8 @@ class SelfObject : public Gtk::Frame{
         Gtk::Button m_Button_Quit;
 
         int x,y;
-        SlotTreeView m_TreeView;
         std::string name;
+        SlotTreeView m_TreeView;
 
         int argc;
         char **argv;

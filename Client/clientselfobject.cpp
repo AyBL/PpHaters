@@ -3,10 +3,9 @@
 
 SelfObject::SelfObject(std::string name, int posx, int posy, int argc,
 char **argv,Serverproxy &proxy):m_VBox(Gtk::ORIENTATION_VERTICAL),m_Label("Name: "),
-m_CheckButton_Editable("Edit"),
-m_Button_Message("Message"),m_Button_AddSlot("Add Slot"),m_Button_Quit("Quit"),
-x(posx),y(posy),m_TreeView(slots,name,proxy,x,y),name(name),argc(argc),
-argv(argv),proxy(proxy),ismoving(false){
+m_CheckButton_Editable("Edit"),m_Button_Message("Message"),m_Button_AddSlot("Add Slot"),
+m_Button_Quit("Quit"),x(posx),y(posy),name(name),m_TreeView(slots,this->name,proxy,x,y),
+argc(argc),argv(argv),proxy(proxy),ismoving(false){
 
     set_border_width(1);
 
@@ -150,7 +149,7 @@ void SelfObject::set_idle_state(){
     Gtk::Window *win = dynamic_cast<Gtk::Window *>(fix->get_parent());
     std::string buffer;
     int xx,yy;
-
+    char type = '0';
     ismoving = false;
 
     win->get_pointer(xx,yy);
@@ -158,7 +157,7 @@ void SelfObject::set_idle_state(){
     xx = xx - dx;
     yy = yy - dy;
 
-    buffer = "P"+std::string(1,name.size())+name;
+    buffer = "P" + std::string(1,type) +std::string(1,name.size())+name;
 
     std::memset(sendbuffer, 0, MAXSENDBUFFER);
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );

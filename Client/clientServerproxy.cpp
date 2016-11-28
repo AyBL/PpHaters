@@ -132,6 +132,8 @@ void Serverproxy::CommandM(){
 	memcpy(&x,bufferanswer,sizeof(int));
 	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&y,bufferanswer,sizeof(int));
+	x = ntohl(x);
+	y = ntohl(y);
 	(*window)->AddAction(new AddValueAction(*window,nameobject,valueslot,x,y));
 }
 
@@ -147,6 +149,8 @@ void Serverproxy::CommandO(){
 	memcpy(&x,bufferanswer,sizeof(int));
 	socket.recv(bufferanswer, 4*sizeof(char));
 	memcpy(&y,bufferanswer,sizeof(int));
+	x = ntohl(x);
+	y = ntohl(y);
 	(*window)->AddAction(new AddObjectAction(*window,nameobject,x,y));
 }
 
@@ -162,7 +166,8 @@ void Serverproxy::CommandP(){
 	memcpy(&x,bufferanswer,sizeof(int));
 	socket.recv(bufferanswer, sizeof(int));
 	memcpy(&y,bufferanswer,sizeof(int));
-
+	x = ntohl(x);
+	y = ntohl(y);
 	(*window)->Move(nameobject,x,y);
 }
 

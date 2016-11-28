@@ -99,6 +99,9 @@ void SelfObject::on_button_message(){
         posx = x + this->get_width()/2;
         posy = y + this->get_height() + 50;
 
+        posx = htonl(posx);
+        posy = htonl(posy);
+
         memcpy(sendbuffer, &posx, sizeof(int));
         proxy.Send(sendbuffer,sizeof(int));
 
@@ -162,7 +165,8 @@ void SelfObject::set_idle_state(){
     std::memset(sendbuffer, 0, MAXSENDBUFFER);
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
     proxy.Send(sendbuffer,strlen(sendbuffer));
-
+    xx = htonl(xx);
+    yy = htonl(yy);
     memcpy(sendbuffer, &xx, sizeof(int) );
     proxy.Send(sendbuffer,sizeof(int));
 

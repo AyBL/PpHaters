@@ -13,6 +13,7 @@
 #include "clientServerproxy.h"
 #include <gtkmm/drawingarea.h>
 #include <string>
+#include <arpa/inet.h>
 
 #define MAXSENDBUFFER 500
 

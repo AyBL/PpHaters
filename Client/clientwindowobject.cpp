@@ -80,6 +80,9 @@ void WindowObject::on_menu_file_popup_create(){
     NameWindow namewindow(name,create);
     get_pointer(x,y);
 
+    x = htonl(x);
+    y = htonl(y);
+
     newapp->run(namewindow);
 
     if (create){

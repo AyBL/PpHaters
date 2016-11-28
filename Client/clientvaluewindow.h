@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <arpa/inet.h>
 
 class ValueObject : public Gtk::Frame{
     public:

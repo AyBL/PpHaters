@@ -9,6 +9,7 @@
 #include <map>
 #include <tuple>
 #include "clientServerproxy.h"
+#include <arpa/inet.h>
 
 #define MAXSENDBUFFER 500
 

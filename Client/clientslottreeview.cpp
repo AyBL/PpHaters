@@ -175,6 +175,9 @@ void SlotTreeView::on_menu_file_popup_obtain(){
             posx = x - 100;
             posy = y + 100;
 
+            posx = htonl(posx);
+            posy = htonl(posy);
+
             memcpy(sendbuffer, &posx, sizeof(int));
             proxy.Send(sendbuffer,sizeof(int));
 

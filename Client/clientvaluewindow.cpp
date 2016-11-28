@@ -79,6 +79,9 @@ void ValueObject::set_idle_state(){
     memcpy( sendbuffer, buffer.c_str(), buffer.size() );
     proxy.Send(sendbuffer,strlen(sendbuffer));
 
+    xx = htonl(xx);
+    yy = htonl(yy);
+
     memcpy(sendbuffer, &xx, sizeof(int) );
     proxy.Send(sendbuffer,sizeof(int));
 

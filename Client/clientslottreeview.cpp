@@ -86,12 +86,13 @@ bool SlotTreeView::on_button_press_event(GdkEventButton* button_event){
 void SlotTreeView::on_menu_file_popup_delete(){
     auto refSelection = get_selection();
     std::string buffer;
+    char type = '0';
     std::memset(sendbuffer, 0, MAXSENDBUFFER);
     if (refSelection){
         Gtk::TreeModel::iterator iter = refSelection->get_selected();
         if (iter){
             Glib::ustring name = (*iter)[m_Columns.m_col_name];
-            buffer = "E"+std::string(1,nameselfobject.size());
+            buffer = "E"  + std::string(1,type) +std::string(1,nameselfobject.size());
             buffer = buffer + nameselfobject + std::string(1,name.size());
             buffer = buffer + name;
             memcpy(sendbuffer, buffer.c_str(), buffer.size() );
@@ -149,6 +150,8 @@ void SlotTreeView::on_menu_file_popup_accept(){
 
                 memcpy(sendbuffer, valuebuffer.c_str(), valuebuffer.size() );
                 proxy.Send(sendbuffer,strlen(sendbuffer));
+            } else {
+                (*iter)[m_Columns.m_col_value] = valueant;
             }
         }
     }

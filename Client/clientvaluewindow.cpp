@@ -31,8 +31,9 @@ ValueObject::~ValueObject(){
 void ValueObject::on_button_quit(){
     char sendbuffer[500];
     std::string buffer;
+    char type = '1';
     std::string lobby("lobby");
-    buffer = "E" + std::string(1,lobby.size()) + lobby;
+    buffer = "E" + std::string(1,type) + std::string(1,lobby.size()) + lobby;
     buffer = buffer + std::string(1,name.size()) + name;
 
     std::memset(sendbuffer, 0, 500);

@@ -66,7 +66,8 @@ SelfObject::~SelfObject(){
 void SelfObject::on_button_quit(){
     std::string buffer;
     std::string lobby("lobby");
-    buffer = "E" + std::string(1,lobby.size()) + lobby;
+    char type = '0';
+    buffer = "E" + std::string(1,type) + std::string(1,lobby.size()) + lobby;
     buffer = buffer + std::string(1,name.size()) + name;
 
     std::memset(sendbuffer, 0, MAXSENDBUFFER);

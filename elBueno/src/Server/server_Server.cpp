@@ -13,36 +13,39 @@ Server::~Server() {
 }
 
 void Server::run() {
-	std::vector<Thread*> clientes;
+	std::vector<ClientManager*> clientes;
 	std::vector<VirtualMachine> MVs;
 //	std::map<std::string, std::vector<ProxyCliente*>> clients;
 	sktPasivo.bindAndListen(ip, port);
 	while (!terminar) { // cambiuar por el bloqueo del accept o algo asi
 		Socket sktActivo(sktPasivo.accept());
 		if (sktActivo.isValid()) {
-			std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+			std::cout
+					<< "+++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 			ProxyCliente proxy(std::move(sktActivo));
 			uint8_t indexMV;
 			proxy.sendLobbiesMenu(MVs);
 			char command = proxy.recvMessage();
 			if (command == 'L') {
 				indexMV = proxy.selectedLobby();
-				std::cout << "Server : index ingresado  "<<indexMV << std::endl;
+				std::cout << "Server : index ingresado  " << indexMV
+						<< std::endl;
 				if (indexMV == 255) {
 					std::string newMV(proxy.getName());
 					MVs.push_back(std::move(VirtualMachine(newMV)));
-					indexMV = MVs.size() - 1;}
-//				}else {indexMV = 0; }
-//			}
-				std::cout << "SERVER ANTES DE PUSHEAR NUEVO CLIENTE" << std::endl;
-				std::cout << "A MV: "<<  MVs[indexMV].getName() << std::endl;
+					indexMV = MVs.size() - 1;
+				}
+				std::cout << "SERVER ANTES DE PUSHEAR NUEVO CLIENTE"
+						<< std::endl;
+				std::cout << "A MV: " << MVs[indexMV].getName() << std::endl;
 				clientes.push_back(
-						new ClientManager(std::move(proxy), MVs[indexMV]));
+						new ClientManager(std::move(proxy), MVs[indexMV], MVs));
 				clientes[clientes.size() - 1]->start();
 			}
 		}
 	}
 	for (unsigned i = 0; i < clientes.size(); ++i) {
+		clientes[i]->stopListening();
 		clientes[i]->join();
 		delete clientes[i];
 	}

@@ -23,7 +23,7 @@ public:
 
 	virtual ~ProxyCliente();
 
-	bool masConsultas();
+//	bool masConsultas();
 
 	void sendLobbiesMenu(std::vector<VirtualMachine> &mvs);
 	char recvMessage(); // RECV CHAR/BYTE
@@ -45,7 +45,7 @@ public:
 	void sendCommandS(std::string ObjectName, std::string SlotName,
 			std::string value, char flag, std::string slotParent);
 
-	void commandP(std::string &objectToMove, uint32_t &newPosX,
+	char commandP(std::string &objectToMove, uint32_t &newPosX,
 			uint32_t &newPosY);
 	void sendCommandP(std::string objectName, uint32_t posX, uint32_t posY);
 
@@ -65,6 +65,8 @@ public:
 			std::string &newSlotName);
 	void sendCommandR(const std::string ObjectName, std::string slotName,
 			std::string newSlotName);
+	void commandD(std::string &ObjectName);
+	void close();
 
 	//------- por moviento --------//
 	ProxyCliente(const ProxyCliente&) = delete;

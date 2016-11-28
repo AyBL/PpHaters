@@ -3,8 +3,9 @@
 #include <sstream>
 #include <unistd.h>
 
-ClientManager::ClientManager(ProxyCliente proxy, VirtualMachine &mv) :
-		proxy(std::move(proxy)), vm(mv) {
+ClientManager::ClientManager(ProxyCliente proxy, VirtualMachine &mv,
+		std::vector<VirtualMachine> &availableVMs) :
+		proxy(std::move(proxy)), vm(mv), availableVMs(availableVMs) {
 	std::cout << "------client manager constructor------" << std::endl;
 	std::cout << "      nueva direccion de proxy: " << &this->proxy
 			<< std::endl;
@@ -15,10 +16,14 @@ ClientManager::ClientManager(ProxyCliente proxy, VirtualMachine &mv) :
 ClientManager::~ClientManager() {
 }
 
+void ClientManager::stopListening() {
+	keepListening = false;
+	proxy.close();
+}
+
 void ClientManager::run() {
 	std::cout << "    entro a run client manager\n";
-	bool j = true;
-	while (j) {
+	while (keepListening) {
 		std::cout << "  recibe el proxy:  " << &this->proxy << std::endl;
 		char command = proxy.recvMessage();
 		std::cout << "  nombreMV  " << this->vm.getName() << std::endl;
@@ -50,9 +55,13 @@ void ClientManager::run() {
 			commandR();
 			break;
 		}
+		case 'D': {
+			commandD();
+			break;
+		}
 		default: {
 			std::cout << "ERROR: comando no existente\n";
-			j = false;
+			stopListening();
 			break;
 		}
 		}
@@ -101,7 +110,7 @@ void ClientManager::commandS() {
 	std::stringstream code(stringParse);
 	Parser parserCode(&code, this->vm);
 	ObjectMasCapo* slot = parserCode.script();
-
+	std::cout << "addslot :  " << slot << std::endl;
 	if (slot == NULL) {
 		if (type == '1') {
 			proxy.sendError("ERROR: Slot inexistente. ");
@@ -117,22 +126,29 @@ void ClientManager::commandS() {
 			vm.getClient(i)->sendCommandS(object, slot->getName(),
 					slot->getValue(), slot->getFlag(), parentName);
 		}
-		std::cout << "CLienteManager: fin de comando A " << stringParse
-				<< std::endl;
+
 	}
 	//vm.unlock();
+	std::cout << "CLienteManager: fin de comando A " << stringParse
+			<< std::endl;
 }
 
 void ClientManager::commandP() {
 	std::string objectToMove;
 	uint32_t positionX, positionY;
-	proxy.commandP(objectToMove, positionX, positionY);
+	char type = proxy.commandP(objectToMove, positionX, positionY);
 	//vm.lock();
-	CustomObject* obj = static_cast<CustomObject*>(vm.lookup(objectToMove));
-	if (obj == NULL) {
-		proxy.sendError("ERROR: Objeto inexistente. ");
-	} else {
-		obj->setPosition(positionX, positionY);
+	bool err = false;
+	if (type == '0') {
+		CustomObject* obj = static_cast<CustomObject*>(vm.lookup(objectToMove));
+		if (obj == NULL) {
+			proxy.sendError("ERROR: Objeto inexistente. ");
+			err = true;
+		} else {
+			obj->setPosition(positionX, positionY);
+		}
+	}
+	if (!err) {
 		for (unsigned i = 0; i < vm.numberOfUsers(); ++i) {
 			vm.getClient(i)->sendCommandP(objectToMove, positionX, positionY);
 		}
@@ -141,14 +157,14 @@ void ClientManager::commandP() {
 }
 
 void ClientManager::commandM() {
-	//Enviar	M (Message)	tam	nomobj	tam	nomslot	x	y
-	//Recibir	M	tam	nomobj	tam	string	x	y
+//Enviar	M (Message)	tam	nomobj	tam	nomslot	x	y
+//Recibir	M	tam	nomobj	tam	string	x	y
 	std::cout << "CLienteManager: entra comando M " << std::endl;
 	std::string receiverName, message;
 	uint32_t positionX, positionY;
 	std::map<std::string, ObjectMasCapo*> argument;
 	char type = proxy.commandM(receiverName, message, positionX, positionY);
-	//vm.lock();
+//vm.lock();
 	ObjectMasCapo* receiver = vm.lookup(receiverName);
 	if (receiver == NULL) {
 		proxy.sendError("ERROR: Objeto inexistente. ");
@@ -180,7 +196,7 @@ void ClientManager::commandE() {
 	std::cout << "CLienteManager: comando E" << std::endl;
 	std::string objectName, slotName;
 	char type = proxy.commandE(objectName, slotName);
-	//vm.lock();
+//vm.lock();
 	if (type == '1') {
 		proxy.sendCommandE(objectName, slotName);
 	} else {
@@ -188,7 +204,8 @@ void ClientManager::commandE() {
 		if (object == NULL) {
 			proxy.sendError("ERROR: Objeto inexistente. ");
 		} else {
-			bool result = object->removeSlot(slotName);
+			bool result = true;
+			object->removeSlot(slotName);
 			if (true) {
 				for (unsigned i = 0; i < vm.numberOfUsers(); ++i) {
 					vm.getClient(i)->sendCommandE(objectName, slotName);
@@ -198,7 +215,7 @@ void ClientManager::commandE() {
 			}
 		}
 	}
-	//	vm.unlock();
+//	vm.unlock();
 	std::cout << "CLienteManager: comando E FIN" << std::endl;
 }
 
@@ -231,27 +248,77 @@ void ClientManager::commandR() {
 		}
 		std::cout << "CLienteManager: comando R   FIN" << std::endl;
 	}
+}
 
-	void ClientManager::sendAll() {
-//	mv.lock();
-		CustomObject *object, *slot, *lobby;
-		lobby = vm.getLobby();
-		std::vector<std::string> slotList, objectList = lobby->getIndex();
-		std::cout << "sendAll antes del for " << std::endl;
-		for (unsigned i = 0; i < objectList.size(); ++i) {
-			object = static_cast<CustomObject*>(vm.lookup(objectList[i]));
-			usleep(250000);
-			proxy.sendCommandO(object->getName(), object->getPositionX(),
-					object->getPositionY());
-			slotList = object->getIndex();
+void ClientManager::commandD() {
+	std::string objectToMove;
+	proxy.sendLobbiesMenu(availableVMs);
+	uint8_t index = proxy.selectedLobby();
+	proxy.commandD(objectToMove);
+	vm.lock();
+	CustomObject *slot, *object = vm.lookup(objectToMove);
+	if (object == NULL) {
+		proxy.sendError("ERROR: Objeto inexistente. ");
+	} else {
+		availableVMs[index].lock();
+		static_cast<CustomObject*>(availableVMs[index].getLobby())->addSlot(
+				object->getName(), object, object->getFlag());
+		std::vector<std::string> slotList = object->getIndex();
+		for (unsigned i = 0; i < availableVMs[index].numberOfUsers(); ++i) {
+			availableVMs[index].getClient(i)->sendCommandO(object->getName(),
+					object->getPositionX(), object->getPositionY());
 			for (unsigned i = 0; i < slotList.size(); ++i) {
 				slot = static_cast<CustomObject*>(object->lookup(slotList[i]));
 				usleep(250000);
-				proxy.sendCommandS(object->getName(), slot->getName(),
-						slot->getValue(), slot->getFlag(), "parent");
+				std::string parentName = "";
+				if (slot->isParent()) {
+					parentName =
+							static_cast<CustomObject*>(slot)->getElementInIndexAt(
+									0);
+				}
+				availableVMs[index].getClient(i)->sendCommandS(
+						object->getName(), slot->getName(), slot->getValue(),
+						slot->getFlag(), parentName);
 			}
-			std::cout << "fin sendALL:" << std::endl;
 		}
-//	mv.unlock();
+		availableVMs[index].unlock();
+		bool result = true;
+		object->removeSlot(objectToMove);
+		if (true) {
+			for (unsigned i = 0; i < vm.numberOfUsers(); ++i) {
+				vm.getClient(i)->sendCommandE("lobby", objectToMove);
+			}
+		}
+		vm.unlock();
 	}
+}
+
+void ClientManager::sendAll() {
+//	mv.lock();
+	CustomObject *object, *slot, *lobby;
+	lobby = vm.getLobby();
+	std::vector<std::string> slotList, objectList = lobby->getIndex();
+	std::cout << "sendAll antes del for " << std::endl;
+	for (unsigned i = 0; i < objectList.size(); ++i) {
+		object = static_cast<CustomObject*>(vm.lookup(objectList[i]));
+		usleep(250000);
+		proxy.sendCommandO(object->getName(), object->getPositionX(),
+				object->getPositionY());
+		slotList = object->getIndex();
+		for (unsigned i = 0; i < slotList.size(); ++i) {
+			slot = static_cast<CustomObject*>(object->lookup(slotList[i]));
+			usleep(250000);
+			std::string parentName = "";
+			if (slot->isParent()) {
+				parentName =
+						static_cast<CustomObject*>(slot)->getElementInIndexAt(
+								0);
+			}
+			proxy.sendCommandS(object->getName(), slot->getName(),
+					slot->getValue(), slot->getFlag(), parentName);
+		}
+		std::cout << "fin sendALL:" << std::endl;
+	}
+//	mv.unlock();
+}
 

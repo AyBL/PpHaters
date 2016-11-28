@@ -35,7 +35,7 @@ bool Parser::hayParentesis1(){
 bool Parser::hayParentesis2(){
 	*(this->stream) >> c;
 
-	std::cout << "Hay parentesis de cierre: " << c << std::endl;
+	////std::cout << "Hay parentesis de cierre: " << c << std::endl;
 
 	return (c == ')');
 }
@@ -49,7 +49,7 @@ bool Parser::hayPipe(){
 	//c = this->stream->get();
 	*(this->stream) >> c;
 
-	std::cout << "C en hayPipe: " << c << std::endl;
+	////std::cout << "C en hayPipe: " << c << std::endl;
 
 	return (c == '|');
 }
@@ -83,7 +83,7 @@ bool Parser::esMutable(){
 //	c = this->stream->get();
 	*(this->stream) >> str;
 
-	std::cout << "Lee en esMutable: " << str << std::endl;
+	////std::cout << "Lee en esMutable: " << str << std::endl;
 
 	if (str == "="){
 		return false;
@@ -91,8 +91,8 @@ bool Parser::esMutable(){
 		return true;
 	}else{
 		//ERROR
-		std::cout << "Solo se acepta '=' o '<-' para describir un slot"
-				<< std::endl;
+		//std::cout << "Solo se acepta '=' o '<-' para describir un slot"
+				//<< std::endl;
 		throw(-1);
 	}
 	return false;
@@ -106,7 +106,7 @@ bool Parser::getStringCodigo(std::string &codigo){
 		codigo += c;
 	}
 
-	std::cout << "-----Codigo en getStringCod: " << codigo << std::endl;
+	//std::cout << "-----Codigo en getStringCod: " << codigo //<< std::endl;
 	//VER COMO HACER PARA DETECTAR ERROR DE SINTAXIS
 	//NO REGISTRA LOS ERRORES CUANDO VM LLAMA A PARSER PARA EJECUTAR CODIGO DE OBJETO
 	//ES PQ NO PARSEA BIEN ACA, SI NO ENCUENTRA .). SE TRABA
@@ -120,7 +120,7 @@ ObjectMasCapo* Parser::script(){
 	ObjectMasCapo *exp = NULL;
 
 	while ((pudoParsear) && (*(this->stream) >> c)){
-		std::cout << "Lo que lee el while: " << c << std::endl;
+		//std::cout << "Lo que lee el while: " << c << std::endl;
 		this->stream->unget();
 
 		//Guardo la pos actual
@@ -128,10 +128,10 @@ ObjectMasCapo* Parser::script(){
 
 		pudoParsear = this->expression(exp, posActual, false);
 
-		std::cout << "---------------------------Iteracion en script: " << i << std::endl;
+		//std::cout << "---------------------------Iteracion en script: " << i << std::endl;
 		++i;
 
-		std::cout << "C en script: " << c << std::endl;
+		//std::cout << "C en script: " << c << std::endl;
 
 		_receiver = NULL;
 
@@ -139,12 +139,12 @@ ObjectMasCapo* Parser::script(){
 			*(this->stream) >> c;
 
 		if (c != '.'){
-			std::cout << "Falta '.' de cierre" << std::endl;
+			//std::cout << "Falta '.' de cierre" << std::endl;
 			//ERROR SINTAXIS
 			throw(-1);
 		}
 	}
-	std::cout << "Recibe obj en script como: " << exp->getName() << std::endl;
+	//std::cout << "Recibe obj en script como: " << exp->getName() << std::endl;
 	return exp;
 }
 
@@ -156,14 +156,14 @@ bool Parser::expression(ObjectMasCapo* &exp, int &pos, const bool &esSlot){
 	 (this->unaryMessage(exp, pos, esSlot)) || (this->expressionCP(exp, pos))){
 		pudoParsear = true;
 	}
-	std::cout << "PUDO PARSEAR EN EXPRESSION: " << pudoParsear << std::endl;
+	//std::cout << "PUDO PARSEAR EN EXPRESSION: " << pudoParsear << std::endl;
 	return pudoParsear;
 }
 
 bool Parser::expressionCP(ObjectMasCapo* &obj, const int &pos){
 	bool pudoParsear = true;
 
-	std::cout << "-----ENTRO A EXPRESSIONCP------" << std::endl;
+	//std::cout << "-----ENTRO A EXPRESSIONCP------" << std::endl;
 
 	if (_receiver == NULL){
 		pudoParsear = this->expressionP(obj, pos);
@@ -179,7 +179,7 @@ bool Parser::expressionCP(ObjectMasCapo* &obj, const int &pos){
 
 bool Parser::expressionP(ObjectMasCapo* &obj, const int &pos){
 
-	std::cout <<"------ENTRA A EXPRESSIONP-----" << std::endl;
+	//std::cout <<"------ENTRA A EXPRESSIONP-----" << std::endl;
 
 	this->stream->seekg(pos);
 	if (!(this->hayParentesis1())){
@@ -198,7 +198,7 @@ bool Parser::expressionP(ObjectMasCapo* &obj, const int &pos){
 		*(this->stream) >> c;
 	if ((!pudoParsear) || (c != ')')){
 		//ERROR
-		std::cout << "Falta ')' " << std::endl;
+		//std::cout << "Falta ')' " << std::endl;
 		throw(-1);
 		return false;
 	}
@@ -215,11 +215,11 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 	std::map<std::string, ObjectMasCapo*> argList;
 	int posAux;
 
-	std::cout << "---------ENTRA A NARIO-----------"<< std::endl;
+	//std::cout << "---------ENTRA A NARIO-----------"<< std::endl;
 
 	bool pudoParsear = this->getReceiver(receiver, pos);
 
-	std::cout << "C despues de getReceiver: " << c << std::endl;
+	//std::cout << "C despues de getReceiver: " << c << std::endl;
 
 	//	*(this->stream) >> c;
 	//Si pudo parsear todo recien ahi llamo al metodo de la vm y paso las cosas
@@ -238,11 +238,11 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 			_receiver = receiver;
 			posAux = this->stream->tellg();
 			pos = posAux;
-			std::cout << "Entro a pudoParsear con rec != null y c != :" << std::endl;
-			std::cout << "Entra con c: " << c << std::endl;
+			//std::cout << "Entro a pudoParsear con rec != null y c != :" << std::endl;
+			//std::cout << "Entra con c: " << c << std::endl;
 		}else{
 
-			std::cout << "Entro a pudoParsear con c igual a : o c igual a ." << std::endl;
+			//std::cout << "Entro a pudoParsear con c igual a : o c igual a ." << std::endl;
 
 			//Para que tome el : en caso de que haya
 			this->stream->unget();
@@ -266,23 +266,23 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 
 	pudoParsear = this->getLowerKeyword(lowerKeyword);
 
-	std::cout << "lower keyword: " << lowerKeyword << std::endl;
+	//std::cout << "lower keyword: " << lowerKeyword << std::endl;
 
 	if (!pudoParsear){
 		//VER SI FUNCIONA EN TODOS LOS CASOS
 		pos = posAux;
 
-		std::cout << "Pos en el arch: " << this->stream->tellg() << std::endl;
-		std::cout << "PosAux: " << pos << std::endl;
-		std::cout << "C en kw: " << c << std::endl;
+		//std::cout << "Pos en el arch: " << this->stream->tellg() << std::endl;
+		//std::cout << "PosAux: " << pos << std::endl;
+		//std::cout << "C en kw: " << c << std::endl;
 
 //		if (receiver != NULL)
 //			c = this->stream->get();
 
-		std::cout << "C en kw despues de avanzar: " << c << std::endl;
-		std::cout << "Pos en el arch: " << this->stream->tellg() << std::endl;
+		//std::cout << "C en kw despues de avanzar: " << c << std::endl;
+		//std::cout << "Pos en el arch: " << this->stream->tellg() << std::endl;
 
-		std::cout << "NO PUDO PARSEAR LOWER KEYWORD" << std::endl;
+		//std::cout << "NO PUDO PARSEAR LOWER KEYWORD" << std::endl;
 
 		return false;
 	}
@@ -304,7 +304,7 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 	_receiver = NULL;
 	pudoParsear = this->expressionCP(arg, posActual);
 
-	std::cout << "Pudo parsear exp Cp de la lowerkeyword: " << pudoParsear << std::endl;
+	//std::cout << "Pudo parsear exp Cp de la lowerkeyword: " << pudoParsear << std::endl;
 
 	if (!pudoParsear){
 		return false;
@@ -318,7 +318,7 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 		std::string capitalKeyword;
 		pudoParsear = this->getCapKeyword(capitalKeyword);
 
-		std::cout << "Capital keyw: " << capitalKeyword << std::endl;
+		//std::cout << "Capital keyw: " << capitalKeyword << std::endl;
 
 		if (!pudoParsear){
 			return false;
@@ -335,11 +335,11 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 		messageName += ':';
 	}
 
-	std::cout << "MESSAGE NAME: " << messageName << std::endl;
+	//std::cout << "MESSAGE NAME: " << messageName << std::endl;
 
 	obj = VM.message(receiver, messageName, argList);
 
-	std::cout << "Obj resultado de message en kwMessage: " << obj << std::endl;
+	//std::cout << "Obj resultado de message en kwMessage: " << obj << std::endl;
 
 	if (obj == NULL){
 		_receiver = receiverAux;
@@ -351,7 +351,7 @@ bool Parser::keywordMessage(ObjectMasCapo* &obj, int &pos){
 
 bool Parser::binaryMessage(ObjectMasCapo* &obj, const int &pos){
 
-	std::cout << "----------------Entra a mensaje binario-----------" << std::endl;
+	//std::cout << "----------------Entra a mensaje binario-----------" << std::endl;
 
 	if (this->nullReceiver)
 		return false;
@@ -363,14 +363,14 @@ bool Parser::binaryMessage(ObjectMasCapo* &obj, const int &pos){
 	this->stream->clear();
 	this->stream->seekg(pos);
 
-	std::cout << "Pos en binary: " << pos << std::endl;
-	std::cout << "Pos con tellg: " << this->stream->tellg() << std::endl;
+	//std::cout << "Pos en binary: " << pos << std::endl;
+	//std::cout << "Pos con tellg: " << this->stream->tellg() << std::endl;
 
 	receiver = _receiver;
 
 	bool pudoParsear = this->getOperator(op);
 
-	std::cout << "Operador leido: " << op << std::endl;
+	//std::cout << "Operador leido: " << op << std::endl;
 
 	if (!pudoParsear){
 		//Me fijo si el receiver es vacio y lo primero q leyo fue un operator
@@ -390,7 +390,7 @@ bool Parser::binaryMessage(ObjectMasCapo* &obj, const int &pos){
 
 		if (c != ' '){
 			//ERROR SINTAXIS
-			std::cout << "Falta espacio" << std::endl;
+			//std::cout << "Falta espacio" << std::endl;
 			throw(-1);
 			return false;
 		}
@@ -405,7 +405,7 @@ bool Parser::binaryMessage(ObjectMasCapo* &obj, const int &pos){
 
 	if (op == ":"){
 
-		std::cout << "Por cambiar el slot: " << receiver << std::endl;
+		//std::cout << "Por cambiar el slot: " << receiver << std::endl;
 
 		bool pudoAsignar = VM.assignmentMessage(receiver->getName(), arg);
 		//Ya se appendea cuando se crea
@@ -435,14 +435,14 @@ bool Parser::unaryMessage(ObjectMasCapo* &obj, int pos, const bool &esSlot){
 	std::string messageName;
 	std::map<std::string, ObjectMasCapo*> argList;
 
-	std::cout << "------------------Entro a unario--------------" << std::endl;
+	//std::cout << "------------------Entro a unario--------------" << std::endl;
 
-	std::cout << "Pos en unary: " << pos << std::endl;
-	std::cout << "Pos con tellg: " << this->stream->tellg() << std::endl;
+	//std::cout << "Pos en unary: " << pos << std::endl;
+	//std::cout << "Pos con tellg: " << this->stream->tellg() << std::endl;
 
 //	bool pudoParsear = this->getReceiver(receiver, pos);
 //
-//	std::cout << "Pudo parsear receiver en unario: " << pudoParsear << std::endl;
+//	//std::cout << "Pudo parsear receiver en unario: " << pudoParsear << std::endl;
 //
 //	if (!pudoParsear){
 //		return false;
@@ -450,18 +450,18 @@ bool Parser::unaryMessage(ObjectMasCapo* &obj, int pos, const bool &esSlot){
 //	c = this->stream->get();
 //	this->stream->unget();
 
-	std::cout << "c en unary antes de avanzar: " << c << std::endl;
+	//std::cout << "c en unary antes de avanzar: " << c << std::endl;
 
 	if (c == ' ')
 		*(this->stream) >> c;
 
-	std::cout << "c en unary: " << c << std::endl;
+	//std::cout << "c en unary: " << c << std::endl;
 
 	//Por si receiver es nulo
 	//VER SI FUNCA
 	if (!esSlot && (this->nullReceiver)){
 
-		std::cout << "Entra a receiver null en unario" << std::endl;
+		//std::cout << "Entra a receiver null en unario" << std::endl;
 
 		receiver = NULL;
 		_receiver = NULL;
@@ -476,7 +476,7 @@ bool Parser::unaryMessage(ObjectMasCapo* &obj, int pos, const bool &esSlot){
 		receiver = _receiver;
 		_receiver = NULL;
 
-		std::cout << "Entra a receiver NO null en unario" << std::endl;
+		//std::cout << "Entra a receiver NO null en unario" << std::endl;
 
 		pudoParsear = this->getName(aux, messageName, pos, false);
 
@@ -570,7 +570,7 @@ bool Parser::getConstant(ObjectMasCapo* &obj, const int &pos){
 }
 
 bool Parser::getNumber(ObjectMasCapo* &obj, const int &pos){
-	std::cout << "----------Entra a getNumber-----------" << std::endl;
+	//std::cout << "----------Entra a getNumber-----------" << std::endl;
 
 	std::string str;
 	this->stream->seekg(pos);
@@ -583,7 +583,7 @@ bool Parser::getNumber(ObjectMasCapo* &obj, const int &pos){
 	double dato;
 	*(this->stream) >> dato;
 
-	std::cout << "Dato leido en getNumber: " << dato << std::endl;
+	//std::cout << "Dato leido en getNumber: " << dato << std::endl;
 
 	//Valido que el caracter despues del numero sea punto o parentesis
 	//(Acepta que haya espacios hasta el . o ) )
@@ -593,7 +593,7 @@ bool Parser::getNumber(ObjectMasCapo* &obj, const int &pos){
 	this->stream->unget();
 	*(this->stream) >> c;
 
-	std::cout << "C despues de unget en getNumber: " << c << std::endl;
+	//std::cout << "C despues de unget en getNumber: " << c << std::endl;
 
 	if (c != '.'){
 		*(this->stream) >> c;
@@ -602,7 +602,7 @@ bool Parser::getNumber(ObjectMasCapo* &obj, const int &pos){
 		if (c != ')')
 			this->stream->unget();
 
-		std::cout << "Como no hay . lee: " << c << std::endl;
+		//std::cout << "Como no hay . lee: " << c << std::endl;
 
 	}
 
@@ -617,7 +617,7 @@ bool Parser::getNumber(ObjectMasCapo* &obj, const int &pos){
 bool Parser::getString(ObjectMasCapo* &obj, const int &pos){
 	this->stream->seekg(pos);
 
-	std::cout << "---------Entra a getString---------" << std::endl;
+	//std::cout << "---------Entra a getString---------" << std::endl;
 
 	std::string str;
 	*(this->stream) >> c;
@@ -629,10 +629,10 @@ bool Parser::getString(ObjectMasCapo* &obj, const int &pos){
 		if (c != '\''){
 			if (c == ' '){
 				//ERROR SINTAXIS
-				std::cout << "No se aceptan espacios en strings" << std::endl;
+				//std::cout << "No se aceptan espacios en strings" << std::endl;
 			}else{
 				//ERROR SINTAXIS
-				std::cout << "Faltan comillas de cierre en el string" << std::endl;
+				//std::cout << "Faltan comillas de cierre en el string" << std::endl;
 			}
 			throw(-1);
 			return false;
@@ -650,7 +650,7 @@ bool Parser::getObject(ObjectMasCapo* &obj, const int &pos){
 	std::vector<std::tuple<std::string, ObjectMasCapo*,	char>> slotList;
 	this->stream->seekg(pos);
 
-	std::cout << "----------Entra a getObject------------" << std::endl;
+	//std::cout << "----------Entra a getObject------------" << std::endl;
 
 	if (this->hayParentesis1() && this->hayPipe()){
 		pudoParsear = this->getSlotList(pos, slotList);
@@ -678,7 +678,7 @@ bool Parser::getObject(ObjectMasCapo* &obj, const int &pos){
 			for (unsigned int i = 0; i < slotList.size(); ++i){
 				std::string nombre = std::get<0>(slotList[i]);
 
-				std::cout << "Se agrega el slot: " << nombre << std::endl;
+				//std::cout << "Se agrega el slot: " << nombre << std::endl;
 
 				//Flags de slots
 				ObjectMasCapo *slot = std::get<1>(slotList[i]);
@@ -691,14 +691,14 @@ bool Parser::getObject(ObjectMasCapo* &obj, const int &pos){
 			//no causa problemas de liberacion de recursos prematura
 			VM.appendObject(obj2);
 
-			std::cout << "Llega al final de recorrer el slotList" << std::endl;
+			//std::cout << "Llega al final de recorrer el slotList" << std::endl;
 
 			obj2->addCode(codigo);
 
 			//Ver si funciona esto
 			obj = obj2;
 
-			std::cout << "Llega al final de crear el Object" << std::endl;
+			//std::cout << "Llega al final de crear el Object" << std::endl;
 
 		}
 	}
@@ -709,7 +709,7 @@ bool Parser::getSlotList(const int &pos, std::vector<std::tuple<std::string,
 		ObjectMasCapo*, char>> &slotList){
 	bool pudoParsear = false;
 
-	std::cout << "----------Entra a getSlotList---------" << std::endl;
+	//std::cout << "----------Entra a getSlotList---------" << std::endl;
 
 	//VER QUE HACER CON LOS OBJETOS CREADOS SI ENCUENTRO ERROR
 	while (!(this->hayPipe())){
@@ -738,14 +738,14 @@ bool Parser::getSlotList(const int &pos, std::vector<std::tuple<std::string,
 			slotList.push_back(tupla);
 		}else{
 
-			std::cout << "Tipo de slot: " << tSlot << std::endl;
+			//std::cout << "Tipo de slot: " << tSlot << std::endl;
 
 			if (tSlot == 'P'){
 				//Avanzo el igual
 				*(this->stream) >> c;
 				*(this->stream) >> c;
 
-				std::cout << "Deberia ser un igual o flecha: " << c << std::endl;
+				//std::cout << "Deberia ser un igual o flecha: " << c << std::endl;
 			}else{
 				bool esMutable = this->esMutable();
 				if (!esMutable)
@@ -756,7 +756,7 @@ bool Parser::getSlotList(const int &pos, std::vector<std::tuple<std::string,
 			//Avanzo el espacio
 			c = this->stream->get();
 
-			std::cout << "C antes de expression del slot: " << c << std::endl;
+			//std::cout << "C antes de expression del slot: " << c << std::endl;
 
 			int posActual2 = this->stream->tellg();
 			pudoParsear = this->expression(exp, posActual2, true);
@@ -768,11 +768,11 @@ bool Parser::getSlotList(const int &pos, std::vector<std::tuple<std::string,
 					*(this->stream) >> c;
 					if (c != '.'){
 						//ERROR
-						std::cout << "Falta '.' para indicar fin del slot" << std::endl;
+						//std::cout << "Falta '.' para indicar fin del slot" << std::endl;
 						throw(-1);
 					}
 				}else{
-					std::cout << "Falta '.' para indicar fin del slot" << std::endl;
+					//std::cout << "Falta '.' para indicar fin del slot" << std::endl;
 					throw(-1);
 				}
 			}
@@ -785,7 +785,7 @@ bool Parser::getSlotList(const int &pos, std::vector<std::tuple<std::string,
 	//VER PQ NO LO REGISTRA SI NO QUE SIGUE EN EL WHILE LOGICAMENTE
 	if (c != '|'){
 		//ERROR
-		std::cout << "Falta '|' para indicar fin de lista de slots" << std::endl;
+		//std::cout << "Falta '|' para indicar fin de lista de slots" << std::endl;
 		throw(-1);
 		return false;
 	}
@@ -796,7 +796,7 @@ bool Parser::getSlotNameExtended(std::string &str, const int &pos,
 		char &tSlot){
 	bool pudoParsear = false;
 
-	std::cout << "--------------------Entra a getSlotNameExtended-----------" << std::endl;
+	//std::cout << "--------------------Entra a getSlotNameExtended-----------" << std::endl;
 
 	ObjectMasCapo *obj;
 //	c = this->stream->get();
@@ -850,12 +850,12 @@ bool Parser::getNil(ObjectMasCapo* &obj, const int &pos){
 bool Parser::getName(ObjectMasCapo* &obj, std::string &name, int pos,
 		bool esExpCP){
 
-	std::cout << "------------Entra a getName----------" << std::endl;
+	//std::cout << "------------Entra a getName----------" << std::endl;
 
 	this->stream->seekg(pos);
 	*(this->stream) >> c;
 
-	std::cout << "Lee en getName: " << c << std::endl;
+	//std::cout << "Lee en getName: " << c << std::endl;
 
 	if (!islower(c))
 		return false;
@@ -865,8 +865,8 @@ bool Parser::getName(ObjectMasCapo* &obj, std::string &name, int pos,
 		c = this->stream->get();
 	}
 
-	std::cout << "Name en getName: " << name << std::endl;
-	std::cout << "Ultimo leido en getName: " << c << std::endl;
+	//std::cout << "Name en getName: " << name << std::endl;
+	//std::cout << "Ultimo leido en getName: " << c << std::endl;
 
 	if (name == "true"){
 		obj = VM.createObject("", true);
@@ -876,8 +876,8 @@ bool Parser::getName(ObjectMasCapo* &obj, std::string &name, int pos,
 		obj = VM.lookup(name);
 		if (obj == NULL){
 			if ((OPERADORES.count(name) == 0) && (NATIVOS.count(name) == 0)){
-				std::cout << "El objeto " << name << " no existe"
-						<< std::endl;
+				//std::cout << "El objeto " << name << " no existe"
+//						<< std::endl;
 				throw(-1);
 			}
 		}

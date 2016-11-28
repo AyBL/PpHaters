@@ -158,10 +158,12 @@ void ProxyCliente::sendCommandS(std::string objectName, std::string slotName,
 }
 
 //Enviar	P (Position)	tam	nomobj	int x	int y
-void ProxyCliente::commandP(std::string &objectToMove, uint32_t &newPosX,
+char ProxyCliente::commandP(std::string &objectToMove, uint32_t &newPosX,
 		uint32_t &newPosY) {
+	char type = recvMessage();
 	objectToMove = getName();
 	getPosition(newPosX, newPosY);
+	return type;
 }
 
 void ProxyCliente::sendCommandP(std::string objectName, uint32_t posX,
@@ -205,8 +207,16 @@ void ProxyCliente::sendCommandE(const std::string ObjectName,
 	sendName(slotName);
 }
 
-bool ProxyCliente::masConsultas() {
-	return clienteEnviando;
+//bool ProxyCliente::masConsultas() {
+//	return clienteEnviando;
+//}
+
+void ProxyCliente::close(){
+	skt.shutdown();
+}
+
+void ProxyCliente::commandD(std::string &ObjectName){
+	ObjectName = getName();
 }
 
 void ProxyCliente::commandR(std::string &ObjectName, std::string &slotName,

@@ -12,6 +12,7 @@
 #include "clientaddobjectaction.h"
 #include "clientremoveobjectaction.h"
 #include "clientaddvalueaction.h"
+#include "clienterroraction.h"
 
 #define MAXSIZE 2000
 #define COMMANDSIZE 1

@@ -237,5 +237,6 @@ void Serverproxy::CommandX(){
 	socket.recv(&tamanio, sizeof(char));
 	socket.recv(bufferanswer, (size_t)tamanio);
 	error = std::string(bufferanswer);
-	(*window)->ErrorMessage(error);	
+	(*window)->AddAction(new ErrorAction(*window,error));
+	
 }

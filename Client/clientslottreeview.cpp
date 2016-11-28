@@ -29,7 +29,7 @@ void SlotTreeView::load_rows(){
 
 SlotTreeView::SlotTreeView(std::map<std::string,
     std::tuple<std::string,char,std::string> > &slots,
-    std::string nameselfobject,Serverproxy &proxy, int &x, int &y):
+    std::string &nameselfobject,Serverproxy &proxy, int &x, int &y):
     slots(slots),nameselfobject(nameselfobject),proxy(proxy),x(x),y(y){
 
     //Create the Tree model:

@@ -16,7 +16,7 @@ class SlotTreeView : public Gtk::TreeView{
     public:
         SlotTreeView(std::map<std::string,
             std::tuple<std::string,char,std::string> > &slots,
-            std::string nameselfobject, Serverproxy &proxy, int &x, int &y);
+            std::string &nameselfobject, Serverproxy &proxy, int &x, int &y);
         virtual ~SlotTreeView();
         void load_rows();
 
@@ -39,7 +39,7 @@ class SlotTreeView : public Gtk::TreeView{
 
         std::map<std::string,
             std::tuple<std::string,char,std::string> > &slots;
-        std::string nameselfobject;
+        std::string &nameselfobject;
         Serverproxy &proxy;
         int &x;
         int &y;

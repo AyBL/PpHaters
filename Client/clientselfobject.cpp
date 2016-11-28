@@ -80,28 +80,31 @@ void SelfObject::on_button_message(){
     int posx,posy;
     auto newapp = Gtk::Application::create(argc, argv,"one.message");
     std::string newmessage,buffer;
+    newmessage = "";
     char type = '0';
     MessageWindow message(newmessage);
     newapp->run(message);
 
-    buffer = "M" + std::string(1,type) + std::string(1,name.size()) + name;
+    if (!newmessage.empty()){
+        buffer = "M" + std::string(1,type) + std::string(1,name.size()) + name;
 
-    buffer = buffer + std::string(1,newmessage.size()) + newmessage;
+        buffer = buffer + std::string(1,newmessage.size()) + newmessage;
 
-    std::memset(sendbuffer, 0, MAXSENDBUFFER);
+        std::memset(sendbuffer, 0, MAXSENDBUFFER);
 
-	memcpy( sendbuffer, buffer.c_str(), buffer.size() );
+        memcpy( sendbuffer, buffer.c_str(), buffer.size() );
 
-    proxy.Send(sendbuffer,strlen(sendbuffer));
+        proxy.Send(sendbuffer,strlen(sendbuffer));
 
-    posx = x + this->get_width()/2;
-    posy = y + this->get_height() + 50;
+        posx = x + this->get_width()/2;
+        posy = y + this->get_height() + 50;
 
-    memcpy(sendbuffer, &posx, sizeof(int));
-    proxy.Send(sendbuffer,sizeof(int));
+        memcpy(sendbuffer, &posx, sizeof(int));
+        proxy.Send(sendbuffer,sizeof(int));
 
-    memcpy(sendbuffer, &posy, sizeof(int));
-    proxy.Send(sendbuffer,sizeof(int));
+        memcpy(sendbuffer, &posy, sizeof(int));
+        proxy.Send(sendbuffer,sizeof(int));
+    }
 }
 
 void SelfObject::on_button_move(){
@@ -111,6 +114,7 @@ void SelfObject::on_button_move(){
 void SelfObject::on_button_addslot(){
     auto newapp = Gtk::Application::create(argc, argv,"add.slot");
     std::string newslot,buffer;
+    newslot = "";
     char type = '0';
     AddSlotWindow addslot(newslot);
     newapp->run(addslot);

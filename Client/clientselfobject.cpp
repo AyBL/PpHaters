@@ -111,12 +111,13 @@ void SelfObject::on_button_move(){
 void SelfObject::on_button_addslot(){
     auto newapp = Gtk::Application::create(argc, argv,"add.slot");
     std::string newslot,buffer;
+    char type = '0';
     AddSlotWindow addslot(newslot);
     newapp->run(addslot);
     if (!newslot.empty()){
         newslot = name + " _addSlot: (| " + newslot +". |).";
 
-        buffer = "S"+std::string(1,name.size())+name;
+        buffer = "S" + std::string(1,type) + std::string(1,name.size())+name;
         buffer = buffer +std::string(1,newslot.size())+newslot;
 
         std::memset(sendbuffer, 0, MAXSENDBUFFER);

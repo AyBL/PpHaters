@@ -48,6 +48,8 @@ class WindowObject : public Gtk::Window{
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
+        bool on_delete_event(GdkEventAny* any_event) override;
+
         std::map <std::string,SelfObject*> selfobjects;
         std::map <std::string,ValueObject*> valueobjects;
         std::vector <Actions*> actions;
@@ -59,6 +61,9 @@ class WindowObject : public Gtk::Window{
         int argc;
         char **argv;
         Serverproxy &proxy;
+
+    private:
+        void CloseAppWithoutHide();
 };
 
 #endif

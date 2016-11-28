@@ -39,6 +39,17 @@ m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy
 WindowObject::~WindowObject(){
 }
 
+void WindowObject::CloseAppWithoutHide(){
+    std::map <std::string,SelfObject*>::iterator it;
+    std::string name;
+    for (it = selfobjects.begin(); it != selfobjects.end();++it){
+        name = it->first;
+        selfobjects[name]->hide();
+        delete(selfobjects[name]);
+        selfobjects.erase(name);
+    }   
+}
+
 bool WindowObject::on_button_press_event(GdkEventButton* button_event){
     bool return_value;
 
@@ -53,40 +64,34 @@ bool WindowObject::on_button_press_event(GdkEventButton* button_event){
 
 void WindowObject::on_menu_file_popup_create(){
     int x,y;
-
+    bool create;
     std::string name,buffer;
     char sendbuffer[200];
     auto newapp = Gtk::Application::create(argc, argv,"name.objeto");
-    NameWindow namewindow(name);
+    NameWindow namewindow(name,create);
     get_pointer(x,y);
 
     newapp->run(namewindow);
 
-    buffer = "O"+std::string(1,name.size())+name;
+    if (create){
+        buffer = "O"+std::string(1,name.size())+name;
 
-    memset(sendbuffer,0,200);
-	memcpy(sendbuffer, buffer.c_str(), buffer.size() );
+        memset(sendbuffer,0,200);
+        memcpy(sendbuffer, buffer.c_str(), buffer.size() );
 
 
-    proxy.Send(sendbuffer,strlen(sendbuffer));
+        proxy.Send(sendbuffer,strlen(sendbuffer));
 
-    memset(sendbuffer,0,200);
-    memcpy(sendbuffer, &x, sizeof(int));
-    proxy.Send(sendbuffer,sizeof(int));
-    memcpy(sendbuffer, &y, sizeof(int) );
-    proxy.Send(sendbuffer,sizeof(int));
+        memset(sendbuffer,0,200);
+        memcpy(sendbuffer, &x, sizeof(int));
+        proxy.Send(sendbuffer,sizeof(int));
+        memcpy(sendbuffer, &y, sizeof(int) );
+        proxy.Send(sendbuffer,sizeof(int));
+    }
 }
 
 void WindowObject::on_menu_file_popup_close(){
-
-    std::map <std::string,SelfObject*>::iterator it;
-    std::string name;
-    for (it = selfobjects.begin(); it != selfobjects.end();++it){
-        name = it->first;
-        selfobjects[name]->hide();
-        delete(selfobjects[name]);
-        selfobjects.erase(name);
-    }
+    CloseAppWithoutHide();
     hide();
 }
 
@@ -172,10 +177,19 @@ void WindowObject::ChangeNameSlot(std::string nameobject,std::string nameslot,st
     selfobjects[nameobject]->ChangeNameSlot(nameslot,newname);
 }
 
+void WindowObject::CloseApp(){
+    CloseAppWithoutHide();    
+}
+
 bool WindowObject::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     on_refresh();
 
     return Gtk::Window::on_draw(cr);
+}
+
+bool WindowObject::on_delete_event(GdkEventAny* any_event){
+    CloseAppWithoutHide();
+    return Gtk::Window::on_delete_event(any_event);    
 }
 
 void WindowObject::ErrorMessage(std::string message){
@@ -184,6 +198,3 @@ void WindowObject::ErrorMessage(std::string message){
     newapp->run(error);    
 }
 
-void WindowObject::CloseApp(){
-    on_menu_file_popup_close();    
-}

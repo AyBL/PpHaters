@@ -10,20 +10,25 @@
 
 class NameWindow : public Gtk::Window{
     public:
-        NameWindow(std::string &name);
+        NameWindow(std::string &name, bool &create);
         virtual ~NameWindow();
 
     protected:
         //Signal handlers:
         void on_button_accept();
+        void on_button_cancel();
 
         //Child widgets:
+        Gtk::Box m_VBox;
         Gtk::Box m_HBox;
+        Gtk::Box m_HBox2;
         Gtk::Label m_Label;
         Gtk::Entry m_Entry;
         Gtk::Button m_Button_Accept;
+        Gtk::Button m_Button_Cancel;
 
         std::string &name;
+        bool &create;
 };
 
 #endif

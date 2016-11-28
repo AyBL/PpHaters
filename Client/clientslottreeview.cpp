@@ -106,7 +106,7 @@ void SlotTreeView::on_menu_file_popup_accept(){
     Glib::ustring name;
     Glib::ustring value;
     bool mut;
-
+    char type = '1';
     std::tuple<std::string,std::string> nvslotsaux;
     std::string nameant,valueant;
     std::string namebuffer,valuebuffer;
@@ -144,7 +144,8 @@ void SlotTreeView::on_menu_file_popup_accept(){
             if (mut && (value != valueant)){
                 valuebuffer = name + ": " + value + ".";
                 valuebuffer = std::string(1,valuebuffer.size()) + valuebuffer;
-                valuebuffer = "S"+std::string(1,nameselfobject.size())+nameselfobject+valuebuffer;
+                valuebuffer = nameselfobject+valuebuffer;
+                valuebuffer = "S" + std::string(1,type) + std::string(1,nameselfobject.size());
 
                 memcpy(sendbuffer, valuebuffer.c_str(), valuebuffer.size() );
                 proxy.Send(sendbuffer,strlen(sendbuffer));

@@ -11,6 +11,11 @@ m_Image(imagen),area(selfobjects,valueobjects),argc(argc),argv(argv),proxy(proxy
         sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_create) );
     m_Menu_Popup.append(*item);
 
+    // item = Gtk::manage(new Gtk::MenuItem("_Move Object", true));
+    // item->signal_activate().connect(
+    //     sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_move) );
+    // m_Menu_Popup.append(*item);
+
     item = Gtk::manage(new Gtk::MenuItem("_Close App", true));
     item->signal_activate().connect(
         sigc::mem_fun(*this, &WindowObject::on_menu_file_popup_close) );
@@ -208,3 +213,39 @@ void WindowObject::ErrorMessage(std::string message){
     newapp->run(error);    
 }
 
+//void WindowObject::AddListLobby(std::tuple<unsigned char,std::string> newlobbies){
+//     moveobject->AddLobbies(newlobbies);
+//}
+
+//void WindowObject::AddListObject(){
+//     std::map <std::string,SelfObject*> ::iterator it;
+//     unsigned char i = 0;
+
+//     for (it = selfobjects.begin(); it != selfobjects.end(); ++it){
+//         moveobject->AddObjects(std::make_tuple(i,it->first));
+//         i++;    
+//     }
+//}
+
+//void WindowObject::on_menu_file_popup_move(){
+    // std::string name = "";
+    // std::string buffer;
+    // char sendbuffer[200];
+    // unsigned char id;
+    // char command = 'D'; 
+    // auto newapp = Gtk::Application::create(argc, argv,"move.object");
+    // moveobject = new MoveObject(id,name);
+    // AddListObject();
+    // proxy.Send(&command,sizeof(char));
+    // newapp->run(*moveobject);
+
+    // if (!name.empty()){
+    //     buffer = std::string(1,id)+std::string(1,name.size())+name;
+    //     memset(sendbuffer,0,200);
+    //     memcpy(sendbuffer, buffer.c_str(), buffer.size() );
+    //     proxy.Send(sendbuffer,strlen(sendbuffer));
+    // }
+
+    // hide();
+    // delete(moveobject);
+//}

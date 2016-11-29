@@ -11,6 +11,7 @@
 #include "clientvaluewindow.h"
 #include "clientdrawingarea.h"
 #include "clienterrorwindow.h"
+#include "clientmoveobject.h"
 #include <map>
 #include <arpa/inet.h>
 
@@ -27,7 +28,6 @@ class WindowObject : public Gtk::Window{
         void AddObject(std::string name,int x, int y);
         void RemoveObject(std::string name);
         void AddValueObject(std::string name,std::string value,int x, int y);
-        // void RemoveValueObject(std::string name);
         void AddSlot(std::string name, std::tuple<std::string, std::string,char,std::string> newslot);
         void RemoveSlot(std::string nameobject,std::string nameslot);
         void Move(std::string nameobject,int x, int y);
@@ -36,12 +36,15 @@ class WindowObject : public Gtk::Window{
         void Invalidate();
         void ErrorMessage(std::string message);
         void CloseApp();
+        //void AddListLobby(std::tuple<unsigned char,std::string> newlobbies);
+        
 
 
     protected:
         //Signal handlers:
         bool on_button_press_event(GdkEventButton* button_event) override;
         void on_menu_file_popup_create();
+        //void on_menu_file_popup_move();
         void on_menu_file_popup_close();
         
         void on_refresh();
@@ -64,6 +67,8 @@ class WindowObject : public Gtk::Window{
 
     private:
         void CloseAppWithoutHide();
+        //void AddListObject();
+        //MoveObject *moveobject;
 };
 
 #endif

@@ -33,7 +33,7 @@ argc(argc),argv(argv),proxy(proxy),ismoving(false){
     m_Button_Move.signal_released().connect( sigc::mem_fun(*this,
               &SelfObject::set_idle_state) );
 
-    m_Button_Move.add_pixlabel("edit-move.ico","Move");
+    m_Button_Move.add_pixlabel("/usr/bin/edit-move.ico","Move");
 
     m_VBox.pack_start(m_Button_Move);
     m_VBox.pack_start(m_HBox);

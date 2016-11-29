@@ -38,6 +38,7 @@ public:
 	void unlock();
 
 	std::string getName(); // para seleccionar la salas despues
+	CustomObject* getLobby() const;
 
 	//---- message---//
 	ObjectMasCapo* lookup(std::string slotName);
@@ -48,27 +49,25 @@ public:
 			std::map<std::string, ObjectMasCapo*> argument);
 	//---------------//
 
+	//---creacion de objetos ---//
 	CustomObject* createObject(std::string name); // customObject
 	NilObject* createNilObject(const std::string &name);
 	StringObject* createObject(std::string name, std::string value);
 	NumberObject* createObject(std::string name, double value);
 	BoolObject* createObject(std::string name, bool value);
+	//--------------------------//
+
 	void appendObject(ObjectMasCapo* obj);
 	void appendSlots(ObjectMasCapo *obj);
 	ObjectMasCapo* cloneObject(ObjectMasCapo* obj,
 			std::map<std::string, ObjectMasCapo*> arguments);
 
 	VirtualMachine(const VirtualMachine&) = delete;
-
 	VirtualMachine& operator=(const VirtualMachine&) = delete;
-
 	VirtualMachine(VirtualMachine&& other);
-
 	VirtualMachine& operator=(VirtualMachine&& other);
 
-	CustomObject* getLobby() const;
-
-	//PARA SERIALIZACION
+	//-------PARA SERIALIZACION-------//
 	Json::Value toJson();
 	void JsonSave(const std::string &nombreArch);
 	ObjectMasCapo* fromJson(Json::Value objJson);
@@ -79,7 +78,7 @@ public:
 	ObjectMasCapo* fromJsonToBool(Json::Value objJson);
 	ObjectMasCapo* fromJsonToPadre(Json::Value customObjJson);
 	void JsonLoad(const std::string &nombreArch);
-
+	//--------------------------------//
 };
 
 #endif /* VIRTUALMACHINE_H_ */

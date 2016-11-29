@@ -66,8 +66,8 @@ void ProxyCliente::getPosition(uint32_t &posX, uint32_t &posY) {
 	skt.recv(buffer, sizeof(uint32_t) * 2);
 	memcpy(&posX, buffer, sizeof(uint32_t));
 	memcpy(&posY, &buffer[4], sizeof(uint32_t));
-//	posX = ntohl(posX);
-//	posY = ntohl(posY);
+	posX = ntohl(posX);
+	posY = ntohl(posY);
 }
 
 void ProxyCliente::commandL() {
@@ -125,8 +125,8 @@ void ProxyCliente::sendName(std::string name) {
 }
 
 void ProxyCliente::sendPosition(uint32_t posX, uint32_t posY) {
-//	posX = htonl(posX);
-//	posY = htonl(posY);
+	posX = htonl(posX);
+	posY = htonl(posY);
 //	memset(buffer, 0, sizeof(buffer));
 	memcpy(buffer, &posX, sizeof(uint32_t));
 	memcpy(&buffer[4], &posY, sizeof(uint32_t));

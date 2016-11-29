@@ -57,19 +57,6 @@ bool ObjectMasCapo::isParent() const {
 	return this->parent;
 }
 
-//void ObjectMasCapo::addMethod(std::string newMethodName,
-//		std::map<std::string, ObjectMasCapo*> arguments){
-//	methods[newMethodName]= arguments;
-//}
-//
-//void ObjectMasCapo::removeMethod(std::string methodToRemove){
-//	if (methods.find(methodToRemove) == methods.end()) {
-//		//no existe metodo error??
-//	}else {
-//		methods.erase(methodToRemove);
-//	}
-//}
-
 ObjectMasCapo* ObjectMasCapo::lookup(std::string slotName) {
 	if (slotName == objectName) {
 		return this;
@@ -87,7 +74,7 @@ std::vector<std::string> ObjectMasCapo::getIndex(){
 	return v;
 }
 
-Json::Value ObjectMasCapo::toJson(){}
+//Json::Value ObjectMasCapo::toJson(){}  //SOLO COMENTE ESTA LINEA, LO DEMAS YA ESTABA
 //ObjectMasCapo* ObjectMasCapo::execute(std::string method,
 //		std::map<std::string, ObjectMasCapo*> arguments) {
 //	MFP fp = methods[method];

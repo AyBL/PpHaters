@@ -17,21 +17,28 @@ private:
 public:
 	ClientManager(ProxyCliente proxy, VirtualMachine &mv, std::vector<VirtualMachine> &availableVMs );
 	virtual ~ClientManager();
-//	char recvCommand();
 	void run();
 	void stopListening();
 private:
-	//metodos para cada comando
-//	void commandL();
+	/* creacion de un nuevo objeto en el lobby */
 	void commandO();
+	/* creacion o cambio de valor de slot en un objeto */
 	void commandS();
+	/* cambio de posiscion de un objeto */
 	void commandP();
+	/* mensajes */
 	void commandM();
-	void commandC();
+	/* borrado de objeto/slot */
 	void commandE();
+	/* renombrar objeto/slot */
 	void commandR();
-	void commandD();
+	/* mover objeto de un lobby a otro */
+	void commandD(); //NO PROBADO FALTA GRAFICA
+	/* envia todo el contenido del lobby  */
 	void sendAll();
+	/* retorna el nombre de su parent,
+	 * de no poseer, string vacio*/
+	std::string getParentName(ObjectMasCapo *obj);
 };
 
 #endif /* SERVER_CLIENTMANAGER_H_ */

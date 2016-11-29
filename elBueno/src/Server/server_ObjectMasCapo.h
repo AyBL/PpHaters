@@ -45,7 +45,7 @@ public:
 			std::map<std::string, ObjectMasCapo*> arguments)=0;
 
 	//PARA SERIALIZACION
-	virtual Json::Value toJson();
+//	virtual Json::Value toJson(); [-Werror=return-type]
 };
 
 #endif /* OBJECTMASCAPO_H_ */

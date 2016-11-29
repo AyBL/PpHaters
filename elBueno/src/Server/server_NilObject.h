@@ -20,7 +20,7 @@ public:
 	~NilObject();
 	ObjectMasCapo* print(std::map<std::string, ObjectMasCapo*> arguments);
 	ObjectMasCapo* clone(std::map<std::string, ObjectMasCapo*> arguments);
-	std::string getValue(){}
+	std::string getValue();
 
 	ObjectMasCapo* execute(std::string method, std::map<std::string, ObjectMasCapo*> arguments);
 

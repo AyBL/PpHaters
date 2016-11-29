@@ -15,7 +15,10 @@ NilObject::NilObject(const std::string &name): ObjectMasCapo(name) {
 }
 
 NilObject::~NilObject() {
-	// TODO Auto-generated destructor stub
+}
+
+std::string NilObject::getValue(){
+	return "nil"; // NO SE SI ESTO O STRING VACIO
 }
 
 ObjectMasCapo* NilObject::print(
@@ -26,7 +29,6 @@ ObjectMasCapo* NilObject::print(
 
 ObjectMasCapo* NilObject::clone(
 		std::map<std::string, ObjectMasCapo*> arguments) {
-	std::cout << "Nil clone" << std::endl;
 	NilObject *newObj = new NilObject(this->getName());
 	return newObj;
 }

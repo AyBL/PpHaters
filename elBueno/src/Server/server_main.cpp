@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
 //		vm.JsonLoad("salida1.txt");
 		try{
 			Parser p(&arch, vm);
-			bool pudoParsear = p.script();
+//			bool pudoParsear = p.script();
+			p.script();  // SI NO USAMOS EL BOOL [-Werror=unused-variable]
 			arch.close();
 		}catch(...){
 			std::cout << "SYNTAX ERROR" << std::endl;

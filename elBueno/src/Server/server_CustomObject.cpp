@@ -116,7 +116,7 @@ ObjectMasCapo* CustomObject::addSlot(std::string slotName,
 //PARA LOS MENSAJES
 ObjectMasCapo* CustomObject::addSlot(
 		std::map<std::string, ObjectMasCapo*> arguments) {
-	ObjectMasCapo *ultimo;
+	ObjectMasCapo *ultimo = NULL;  // ACA PONDRIA UN NULL PARA INICIALIZAR XQ SINO [-Werror=maybe-uninitialized]
 
 	std::map<std::string, ObjectMasCapo*>::iterator it = arguments.begin();
 
@@ -426,14 +426,6 @@ void CustomObject::setPosition(int posX, int posY) {
 
 unsigned CustomObject::numberOfSlots() {
 	return this->slots.size();
-}
-//ESTE METODO POR AHI SE PUEDE HACER GUARDANDO EL CONTEXTO ANTERIOR EN UN ATRIBUTO DE LA VM
-//Y CUANDO SE NECESITE SE PIDE CON UN GET
-ObjectMasCapo* CustomObject::getSlot(int slotIndex) {
-//	if (slotIndex == -1){
-//		slotIndex=slots.size()-1;
-//	}
-//	return slots[slotIndex];
 }
 
 std::string CustomObject::getValue() {

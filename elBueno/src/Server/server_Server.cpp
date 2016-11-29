@@ -15,24 +15,19 @@ Server::~Server() {
 void Server::run() {
 	std::vector<ClientManager*> clientes;
 	std::vector<VirtualMachine> MVs;
-//	std::map<std::string, std::vector<ProxyCliente*>> clients;
 	sktPasivo.bindAndListen(ip, port);
-	while (!terminar) { // cambiuar por el bloqueo del accept o algo asi
+	while (!terminar) {
 		Socket sktActivo(sktPasivo.accept());
 		if (sktActivo.isValid()) {
 			std::cout
 					<< "+++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 			ProxyCliente proxy(std::move(sktActivo));
 			uint8_t indexMV;
+			std::string vmName;
 			proxy.sendLobbiesMenu(MVs);
-			char command = proxy.recvMessage();
-			if (command == 'L') {
-				indexMV = proxy.selectedLobby();
-				std::cout << "Server : index ingresado  " << indexMV
-						<< std::endl;
+			if (proxy.recvCommandL(indexMV,vmName)) {
 				if (indexMV == 255) {
-					std::string newMV(proxy.getName());
-					MVs.push_back(std::move(VirtualMachine(newMV)));
+					MVs.push_back(std::move(VirtualMachine(vmName)));
 					indexMV = MVs.size() - 1;
 				}
 				std::cout << "SERVER ANTES DE PUSHEAR NUEVO CLIENTE"

@@ -174,7 +174,7 @@ void VirtualMachine::appendSlots(ObjectMasCapo *obj) {
 	std::cout << "ClonedIndex size: " << objIndex.size() << std::endl;
 
 	if (objIndex.size() != 0) {
-		for (int i = 0; i < objIndex.size(); ++i) {
+		for (unsigned i = 0; i < objIndex.size(); ++i) {
 			this->appendSlots(obj->lookup(objIndex[i]));
 		}
 	}
@@ -411,8 +411,8 @@ ObjectMasCapo* VirtualMachine::fromJsonToBool(Json::Value objJson) {
 //NO QUE SE LE ASIGNE UN PUNTERO AL OBJ YA EXISTENTE
 ObjectMasCapo* VirtualMachine::fromJsonToPadre(Json::Value customObjJson) {
 	Json::Value slots_json;
-	ObjectMasCapo *padre;
-	char tipoSlot;
+	ObjectMasCapo *padre = NULL;  //IGUALE A NULL POR [-Werror=maybe-uninitialized]
+//	char tipoSlot; NO SE USAA!
 //	CustomObject *obj = this->createObject(customObjJson["name"].asString());
 
 	std::cout << "Deberia ser pepe: " << customObjJson["name"].asString()
